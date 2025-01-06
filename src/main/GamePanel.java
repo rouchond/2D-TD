@@ -1,5 +1,9 @@
 package main;
 
+import player.Player;
+import tile.Tile;
+import tile.TileManager;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -74,9 +78,10 @@ public class GamePanel extends JPanel implements Runnable{
 
     Thread gameThread;
     KeyHandler keyH = new KeyHandler();
+    TileManager tileM = new TileManager(this);
 
     // Entities
-
+    public Player player = new Player(this, keyH);
 
     /**
      * An empty black game window that can listen for key inputs
@@ -90,6 +95,14 @@ public class GamePanel extends JPanel implements Runnable{
         this.setFocusable(true);
     }
 
+    private void setTiles () {
+
+    }
+
+    private void setScreen () {
+
+    }
+
     /**
      * Instantiating a gameThread with the panel and starting thread
      */
@@ -101,7 +114,7 @@ public class GamePanel extends JPanel implements Runnable{
     /**
      * Update the state of the game based on FPS
      */
-    public void update () {}
+    public void update () {player.update();}
 
     /**
      * When the thread is started, run is called
@@ -146,7 +159,9 @@ public class GamePanel extends JPanel implements Runnable{
         Graphics2D g2 = (Graphics2D) g;
 
         // Tile Manager
+        tileM.draw(g2);
 
         // Player
+        player.draw(g2);
     }
 }

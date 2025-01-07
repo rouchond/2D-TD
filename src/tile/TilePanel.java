@@ -156,6 +156,7 @@ public class TilePanel extends JPanel implements Runnable{
         moveCamera();
         updateMousePosition();
         placeTile();
+        saveMap();
         keyH.update();
     }
 
@@ -173,11 +174,28 @@ public class TilePanel extends JPanel implements Runnable{
         }
     }
 
+    /**
+     * When left-clicking either erase the tile or place the new tile
+     */
     private void placeTile () {
         if (keyH.mousePressed) {
-            tileE.mapTileNum[currentTileCol][currentTileRow] = tileIndex;
+            if (tileIndex != 0) {
+                Tile tile = new Tile();
+                tile.tileIndex = tileIndex;
+                tile.tileSet = tileSet;
+                tile.image = tileE.tiles.get(tileSet).get(tileIndex).image;
+                tileE.mapTileNum[currentTileCol][currentTileRow] = tile;
+            } else {
+                tileE.mapTileNum[currentTileCol][currentTileRow] = null;
+            }
         }
 
+    }
+
+    private void saveMap () {
+        if (keyH.mPressed && !keyH.previousMPressed) {
+            tileE.saveMap();
+        }
     }
 
     /**
@@ -284,8 +302,6 @@ public class TilePanel extends JPanel implements Runnable{
 
             if (timer >= 1000000000) {
                 timer = 0;
-                System.out.println("TileIndex: " + tileIndex);
-                System.out.println("ErasingIndex: " + erasingIndex);
             }
         }
     }

@@ -3,6 +3,8 @@ package tile;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,11 +22,11 @@ public class TileEditor {
     /**
      * The position of a tile in the tile array
      */
-    public int[][] mapTileNum;
+    public Tile [][] mapTileNum;
 
     public TileEditor(TilePanel tp) {
         this.tp = tp;
-        mapTileNum = new int[tp.maxWorldCol][tp.maxWorldRow];
+        mapTileNum = new Tile[tp.maxWorldCol][tp.maxWorldRow];
         TileLoader tileLoader = new TileLoader();
         tiles = tileLoader.Tiles;
     }
@@ -41,8 +43,10 @@ public class TileEditor {
         int worldRow = 0;
 
         while (worldCol < tp.maxWorldCol && worldRow < tp.maxWorldRow) {
-            int tileNum = mapTileNum[worldCol][worldRow];
-            if (tiles.get("dungeon").get(tileNum) != null) {
+            if (mapTileNum[worldCol][worldRow] != null) {
+                String tileSet = mapTileNum[worldCol][worldRow].tileSet;
+                int tileNum = mapTileNum[worldCol][worldRow].tileIndex;
+
                 // Convert world position to screen position, accounting for camera
                 int worldX = worldCol * tp.tileSize;
                 int worldY = worldRow * tp.tileSize;
@@ -55,7 +59,7 @@ public class TileEditor {
                         screenY + tp.tileSize > 0 &&
                         screenY < tp.screenHeight) {
 
-                    g2.drawImage(tiles.get("dungeon").get(tileNum).image, screenX, screenY, tp.tileSize, tp.tileSize, null);
+                    g2.drawImage(tiles.get(tileSet).get(tileNum).image, screenX, screenY, tp.tileSize, tp.tileSize, null);
                 }
             }
 
@@ -91,7 +95,36 @@ public class TileEditor {
      * Saves the current state of the TileEditor as a map
      */
     public void saveMap() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("res/maps/generatedMap.txt"))) {
 
+            // Go through entire map
+            int worldCol = 0;
+            int worldRow = 0;
+
+            while (worldCol < tp.maxWorldCol && worldRow < tp.maxWorldRow) {
+
+                // Save tile if it's not null
+                if (mapTileNum[worldCol][worldRow] != null) {
+                    String tileSet = mapTileNum[worldCol][worldRow].tileSet;
+                    int tileNum = mapTileNum[worldCol][worldRow].tileIndex;
+
+                    String line = tileSet + "," + tileNum + "," + worldCol + "," + worldRow;
+                    writer.write(line);
+                    writer.newLine();
+                    }
+
+
+                worldCol++;
+
+                if (worldCol == tp.maxWorldCol) {
+                    worldCol = 0;
+                    worldRow++;
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            }
     }
 
     /**

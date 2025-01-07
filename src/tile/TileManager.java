@@ -4,10 +4,7 @@ import main.GamePanel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -23,7 +20,7 @@ public class TileManager {
     /**
      * The position of a tile in the tile array
      */
-    public int[][] mapTileNum;
+    public Tile[][] mapTileNum;
 
     /**
      *
@@ -31,10 +28,10 @@ public class TileManager {
      */
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+        mapTileNum = new Tile[gp.maxWorldCol][gp.maxWorldRow];
         TileLoader tileLoader = new TileLoader();
         tiles = tileLoader.Tiles;
-        loadMap("/maps/world01.txt");
+        loadMap("res/maps/generatedMap.txt");
     }
 
     /**
@@ -42,34 +39,52 @@ public class TileManager {
      * @param mapPath The filepath of the map being loaded
      */
     private void loadMap(String mapPath) {
-        try {
-            InputStream is = getClass().getResourceAsStream(mapPath);
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        try (BufferedReader reader = new BufferedReader(new FileReader(mapPath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Split the line by comma
+                String[] values = line.split(",");
 
-            int col = 0;
-            int row = 0;
-            while (col < gp.maxWorldCol && row < gp.maxWorldRow){
-                String line = br.readLine();
-
-                while(col < gp.maxWorldCol) {
-                    String[] numbers = line.split(" ");
-
-                    int num = Integer.parseInt(numbers[col]);
-
-                    mapTileNum[col][row] = num;
-                    col++;
-                }
-
-                if (col == gp.maxWorldCol) {
-                    col = 0;
-                    row++;
-                }
+                // Create object from values
+                Tile tile = new Tile();
+                tile.tileSet = values[0];
+                tile.tileIndex = Integer.parseInt(values[1]);
+                tile.image = tiles.get(tile.tileSet).get(tile.tileIndex).image;
+                mapTileNum[Integer.parseInt(values[2])][Integer.parseInt(values[3])] = tile;
             }
-            br.close();
-        }
-        catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+//        try {
+//            InputStream is = getClass().getResourceAsStream(mapPath);
+//            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+//
+//            int col = 0;
+//            int row = 0;
+//            while (col < gp.maxWorldCol && row < gp.maxWorldRow){
+//                String line = br.readLine();
+//
+//                while(col < gp.maxWorldCol) {
+//                    String[] numbers = line.split(" ");
+//
+//                    int num = Integer.parseInt(numbers[col]);
+//
+//                    mapTileNum[col][row] = num;
+//                    col++;
+//                }
+//
+//                if (col == gp.maxWorldCol) {
+//                    col = 0;
+//                    row++;
+//                }
+//            }
+//            br.close();
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -83,8 +98,8 @@ public class TileManager {
         int worldRow = 0;
 
         while (worldCol < gp.maxWorldCol && worldRow < gp.maxWorldRow) {
-            int tileNum = mapTileNum[worldCol][worldRow];
-            if (tiles.get("dungeon").get(tileNum) != null) {
+            Tile tile = mapTileNum[worldCol][worldRow];
+            if (tile != null) {
                 int worldX = worldCol * gp.tileSize;
                 int worldY = worldRow * gp.tileSize;
                 int screenX = worldX - (int) gp.player.worldX + gp.player.screenX; //screenX is an offset accounting for the centering of the player
@@ -96,7 +111,7 @@ public class TileManager {
                         worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
                         worldY - (2 * gp.tileSize) < gp.player.worldY + gp.player.screenY) {
 
-                    g2.drawImage(tiles.get("dungeon").get(tileNum).image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+                    g2.drawImage(tile.image, screenX, screenY, gp.tileSize, gp.tileSize, null);
                 }
             }
 

@@ -38,12 +38,16 @@ public class TileLoader {
 
         File[] files = folder.listFiles();
         if (files != null) {
+            int i = 1;
             for (File file : files) {
                 try {
                     BufferedImage img = ImageIO.read(file);
                     if (img != null) {
                         Tile tile = new Tile();
                         tile.image = img;
+                        tile.tileSet = "dungeon";
+                        tile.tileIndex = i;
+                        i++;
                         Tiles.get("dungeon").add(tile);
                     }
                 } catch (IOException e) {

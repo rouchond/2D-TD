@@ -11,6 +11,7 @@ public class KeyHandler implements KeyListener, MouseListener {
     public boolean upArrowPressed, downArrowPressed;
     public boolean previousUpArrowPressed, previousDownArrowPressed;
     public boolean ePressed, previousEPressed;
+    public boolean mPressed, previousMPressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -56,6 +57,11 @@ public class KeyHandler implements KeyListener, MouseListener {
             keyDown = true;
         }
 
+        if (code == KeyEvent.VK_M) {
+            mPressed = true;
+            keyDown = true;
+        }
+
     }
 
     @Override
@@ -94,7 +100,11 @@ public class KeyHandler implements KeyListener, MouseListener {
             ePressed = false;
         }
 
-        if (!rightPressed && !leftPressed && !downPressed && !upPressed && !upArrowPressed && !downArrowPressed && !ePressed) {
+        if (code == KeyEvent.VK_M) {
+            mPressed = false;
+        }
+
+        if (!rightPressed && !leftPressed && !downPressed && !upPressed && !upArrowPressed && !downArrowPressed && !ePressed && !mPressed) {
             keyDown = false;
         }
     }
@@ -132,5 +142,6 @@ public class KeyHandler implements KeyListener, MouseListener {
         previousDownArrowPressed = downArrowPressed;
         previousUpArrowPressed = upArrowPressed;
         previousEPressed = ePressed;
+        previousMPressed = mPressed;
     }
 }

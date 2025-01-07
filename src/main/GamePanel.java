@@ -95,14 +95,6 @@ public class GamePanel extends JPanel implements Runnable{
         this.setFocusable(true);
     }
 
-    private void setTiles () {
-
-    }
-
-    private void setScreen () {
-
-    }
-
     /**
      * Instantiating a gameThread with the panel and starting thread
      */

@@ -114,7 +114,10 @@ public class GamePanel extends JPanel implements Runnable{
     /**
      * Update the state of the game based on FPS
      */
-    public void update () {player.update();}
+    public void update () {
+        keyH.update();
+        player.update();
+    }
 
     /**
      * When the thread is started, run is called

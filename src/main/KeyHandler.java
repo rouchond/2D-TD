@@ -8,6 +8,9 @@ import java.awt.event.MouseListener;
 public class KeyHandler implements KeyListener, MouseListener {
 
     public boolean keyDown, leftPressed, rightPressed, upPressed, downPressed, mousePressed;
+    public boolean upArrowPressed, downArrowPressed;
+    public boolean previousUpArrowPressed, previousDownArrowPressed;
+    public boolean ePressed, previousEPressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -38,6 +41,21 @@ public class KeyHandler implements KeyListener, MouseListener {
             keyDown = true;
         }
 
+        if (code == KeyEvent.VK_UP) {
+            upArrowPressed = true;
+            keyDown = true;
+        }
+
+        if (code == KeyEvent.VK_DOWN) {
+            downArrowPressed = true;
+            keyDown = true;
+        }
+
+        if (code == KeyEvent.VK_E) {
+            ePressed = true;
+            keyDown = true;
+        }
+
     }
 
     @Override
@@ -64,7 +82,19 @@ public class KeyHandler implements KeyListener, MouseListener {
             mousePressed = false;
         }
 
-        if (!rightPressed && !leftPressed && !downPressed && !upPressed) {
+        if (code == KeyEvent.VK_UP) {
+            upArrowPressed = false;
+        }
+
+        if (code == KeyEvent.VK_DOWN) {
+            downArrowPressed = false;
+        }
+
+        if (code == KeyEvent.VK_E) {
+            ePressed = false;
+        }
+
+        if (!rightPressed && !leftPressed && !downPressed && !upPressed && !upArrowPressed && !downArrowPressed && !ePressed) {
             keyDown = false;
         }
     }
@@ -96,5 +126,11 @@ public class KeyHandler implements KeyListener, MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
         // Will not implement
+    }
+
+    public void update() {
+        previousDownArrowPressed = downArrowPressed;
+        previousUpArrowPressed = upArrowPressed;
+        previousEPressed = ePressed;
     }
 }

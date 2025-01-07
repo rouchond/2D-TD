@@ -1,12 +1,11 @@
 package tile;
 
-import main.GamePanel;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.Buffer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class TileEditor {
@@ -14,9 +13,9 @@ public class TileEditor {
     TilePanel tp;
 
     /**
-     * An array of all the tiles in the world
+     * A hashmap of all the tiles in the world
      */
-    public Tile[] tile;
+    HashMap<String, ArrayList<Tile>> tiles;
 
     /**
      * The position of a tile in the tile array
@@ -25,32 +24,11 @@ public class TileEditor {
 
     public TileEditor(TilePanel tp) {
         this.tp = tp;
-        tile = new Tile[10];
         mapTileNum = new int[tp.maxWorldCol][tp.maxWorldRow];
-        getTileImage();
+        TileLoader tileLoader = new TileLoader();
+        tiles = tileLoader.Tiles;
     }
 
-    /**
-     * Load all the tile sprites
-     */
-    public void getTileImage() {
-        try{
-            tile[1] = new Tile();
-            tile[1].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/dungeon01.png")));
-            tile[1].collision = true;
-
-            tile[2] = new Tile();
-            tile[2].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/dungeon02.png")));
-            tile[2].collision = true;
-
-            tile[3] = new Tile();
-            tile[3].image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/tiles/dungeon03.png")));
-            tile[3].collision = true;
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Draws the tile map onto the camera
@@ -64,7 +42,7 @@ public class TileEditor {
 
         while (worldCol < tp.maxWorldCol && worldRow < tp.maxWorldRow) {
             int tileNum = mapTileNum[worldCol][worldRow];
-            if (tile[tileNum] != null) {
+            if (tiles.get("dungeon").get(tileNum) != null) {
                 // Convert world position to screen position, accounting for camera
                 int worldX = worldCol * tp.tileSize;
                 int worldY = worldRow * tp.tileSize;
@@ -77,7 +55,7 @@ public class TileEditor {
                         screenY + tp.tileSize > 0 &&
                         screenY < tp.screenHeight) {
 
-                    g2.drawImage(tile[tileNum].image, screenX, screenY, tp.tileSize, tp.tileSize, null);
+                    g2.drawImage(tiles.get("dungeon").get(tileNum).image, screenX, screenY, tp.tileSize, tp.tileSize, null);
                 }
             }
 

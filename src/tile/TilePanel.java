@@ -56,9 +56,6 @@ public class TilePanel extends JPanel implements Runnable{
      */
     public final int maxWorldRow = 20;
 
-    // Time
-
-
     /**
      * FPS cap of the game
      */
@@ -112,6 +109,23 @@ public class TilePanel extends JPanel implements Runnable{
      */
     public int currentTileRow = 0;
 
+    // Tile Placements
+
+    /**
+     * The tileSet array being used
+     */
+    private String tileSet = "dungeon";
+
+    /**
+     * The index of the tile in our specified tileSet
+     */
+    private int tileIndex = 1;
+
+    /**
+     * The index of the tile prior to erasing
+     */
+    private int erasingIndex = 1;
+
     /**
      * An empty black game window that can listen for key inputs
      * Default Dimensions: 768 Pixels x 576 Pixels
@@ -137,11 +151,12 @@ public class TilePanel extends JPanel implements Runnable{
      * Update the state of the game based on FPS
      */
     public void update () {
+        setErasing();
+        changeTile();
         moveCamera();
         updateMousePosition();
-        if (keyH.mousePressed) {
-            placeTile(tileE.tile[1].image, currentTileCol, currentTileRow);
-        }
+        placeTile();
+        keyH.update();
     }
 
     private void moveCamera () {
@@ -158,11 +173,11 @@ public class TilePanel extends JPanel implements Runnable{
         }
     }
 
-    private void placeTile (BufferedImage tileImg, int tileCol, int tileRow) {
-        tileE.mapTileNum[tileCol][tileRow] = 1;
-        System.out.println("Placed tile at:");
-        System.out.println("Col: " + tileCol);
-        System.out.println("Row: " + tileRow);
+    private void placeTile () {
+        if (keyH.mousePressed) {
+            tileE.mapTileNum[currentTileCol][currentTileRow] = tileIndex;
+        }
+
     }
 
     /**
@@ -203,6 +218,40 @@ public class TilePanel extends JPanel implements Runnable{
     }
 
     /**
+     * Changes the tile being placed.
+     */
+    private void changeTile () {
+        if (keyH.upArrowPressed && !keyH.previousUpArrowPressed) {
+            if (tileIndex == tileE.tiles.get(tileSet).size() - 1) {
+                tileIndex = 1;
+            } else {
+                tileIndex++;
+            }
+        } else if (keyH.downArrowPressed && !keyH.previousDownArrowPressed) {
+            if (tileIndex == 1) {
+                tileIndex = tileE.tiles.get(tileSet).size() - 1;
+            } else {
+                tileIndex--;
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    private void setErasing () {
+        if (keyH.ePressed) {
+            if (tileIndex != 0) {
+                erasingIndex = tileIndex;
+                tileIndex = 0;
+            }
+            else {
+                tileIndex = erasingIndex;
+            }
+        }
+    }
+
+    /**
      * When the thread is started, run is called
      * Run handles the time (FPS) in the game
      */
@@ -235,6 +284,8 @@ public class TilePanel extends JPanel implements Runnable{
 
             if (timer >= 1000000000) {
                 timer = 0;
+                System.out.println("TileIndex: " + tileIndex);
+                System.out.println("ErasingIndex: " + erasingIndex);
             }
         }
     }
@@ -244,7 +295,9 @@ public class TilePanel extends JPanel implements Runnable{
 
         Graphics2D g2 = (Graphics2D) g;
         tileE.drawPlaced(g2);
-        tileE.drawMouse(g2, tileE.tile[1].image, currentTileCol, currentTileRow);
+        if (tileIndex != 0) {
+            tileE.drawMouse(g2, tileE.tiles.get(tileSet).get(tileIndex).image, currentTileCol, currentTileRow);
+        }
 
     }
 }

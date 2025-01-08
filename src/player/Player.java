@@ -38,8 +38,8 @@ public class Player extends Entity {
         this.keyH = keyH;
         this.colH = colH;
 
-        screenX = gp.screenWidth/2 - (gp.tileSize);
-        screenY = gp.screenHeight/2 - (gp.tileSize);
+        screenX = gp.screenWidth/2 - (GamePanel.tileSize);
+        screenY = gp.screenHeight/2 - (GamePanel.tileSize);
 
         solidArea = new Rectangle(8, 16, 32, 32);
         solidAreaWorldX = solidArea.x;
@@ -53,8 +53,8 @@ public class Player extends Entity {
      * Set initial position and speed of the player
      */
     private void setDefaultValues(){
-        worldX = gp.tileSize * 7;
-        worldY = gp.tileSize * 5;
+        worldX = GamePanel.tileSize * 7;
+        worldY = GamePanel.tileSize * 5;
         maxSpeed = 5;
         direction = EntityUtil.Direction.DOWN;
     }
@@ -75,7 +75,7 @@ public class Player extends Entity {
      * Logic that is updated every frame
      */
     public void update() {
-        if (keyH.keyDown) {
+        if (keyH.keyDown && !keyH.ePressed) {
             if (keyH.downPressed) {
                 direction = EntityUtil.Direction.DOWN;
             } else if (keyH.upPressed) {
@@ -113,7 +113,7 @@ public class Player extends Entity {
      * @param g2 2D graphics object from GamePanel
      */
     public void draw(Graphics2D g2) {
-        g2.drawImage(img, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        g2.drawImage(img, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
 
         //Debug Drawings
         g2.setColor(Color.red);

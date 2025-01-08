@@ -1,8 +1,8 @@
 package main;
 
 import player.Player;
-import tile.Tile;
 import tile.TileManager;
+import tower.TowerPlacer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,17 +12,17 @@ public class GamePanel extends JPanel implements Runnable{
     /**
      * The size of a tile
      */
-    final int originalTileSize = 16;
+    static final int originalTileSize = 16;
 
     /**
      * Scaling factor of the game
      */
-    final int scale = 3;
+    static final int scale = 3;
 
     /**
      *Size of the tile after applying scaling
      */
-    public final int tileSize = originalTileSize * scale;
+    public static final int tileSize = originalTileSize * scale;
 
     /**
      * Width of the screen (unit is per tile)
@@ -78,7 +78,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     Thread gameThread;
     KeyHandler keyH = new KeyHandler();
-    TileManager tileM = new TileManager(this);
+    TileManager tileM = new TileManager(this, keyH);
     CollisionHandler colH = new CollisionHandler(this);
 
     // Entities
@@ -109,8 +109,11 @@ public class GamePanel extends JPanel implements Runnable{
      * Update the state of the game based on FPS
      */
     public void update () {
-        keyH.update();
         player.update();
+        for (TowerPlacer towerLocation : tileM.towerLocations) {
+            towerLocation.update(player);
+        }
+        keyH.update();
     }
 
     /**

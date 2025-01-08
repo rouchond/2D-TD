@@ -1,8 +1,9 @@
 package tile;
 
 import main.GamePanel;
+import main.KeyHandler;
+import tower.TowerPlacer;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -11,11 +12,17 @@ import java.util.Objects;
 
 public class TileManager {
     GamePanel gp;
+    KeyHandler keyH;
 
     /**
      * A hashmap of all the possible tiles
      */
     HashMap<String, ArrayList<Tile>> tiles;
+
+    /**
+     * An array of all possible tower locations
+     */
+    public ArrayList<TowerPlacer> towerLocations = new ArrayList<>();
 
     /**
      * The position of a tile in the tile array
@@ -26,8 +33,9 @@ public class TileManager {
      *
      * @param gp
      */
-    public TileManager(GamePanel gp) {
+    public TileManager(GamePanel gp, KeyHandler keyH) {
         this.gp = gp;
+        this.keyH = keyH;
         mapTileNum = new Tile[gp.maxWorldCol][gp.maxWorldRow];
         TileLoader tileLoader = new TileLoader();
         tiles = tileLoader.Tiles;
@@ -45,49 +53,32 @@ public class TileManager {
                 // Split the line by comma
                 String[] values = line.split(",");
 
-                // Create tile from the predefined properties
-                Tile tile = new Tile();
-                tile.tileSet = values[0];
-                tile.tileIndex = Integer.parseInt(values[1]);
+                // Create tile/towerPlacer from the predefined properties
+                if (Integer.parseInt(values[1]) == 16 && Objects.equals(values[0], "dungeon")) {
+                    TowerPlacer tile = new TowerPlacer(Integer.parseInt(values[2]), Integer.parseInt(values[3]), keyH);
+                    tile.tileSet = values[0];
+                    tile.tileIndex = Integer.parseInt(values[1]);
 
-                tile.image = tiles.get(tile.tileSet).get(tile.tileIndex).image;
-                tile.collision = tiles.get(tile.tileSet).get(tile.tileIndex).collision;
+                    tile.image = tiles.get(tile.tileSet).get(tile.tileIndex).image;
+                    tile.collision = tiles.get(tile.tileSet).get(tile.tileIndex).collision;
 
-                mapTileNum[Integer.parseInt(values[2])][Integer.parseInt(values[3])] = tile;
+                    towerLocations.add(tile);
+                    mapTileNum[Integer.parseInt(values[2])][Integer.parseInt(values[3])] = tile;
+                } else {
+                    Tile tile = new Tile();
+                    tile.tileSet = values[0];
+                    tile.tileIndex = Integer.parseInt(values[1]);
+
+                    tile.image = tiles.get(tile.tileSet).get(tile.tileIndex).image;
+                    tile.collision = tiles.get(tile.tileSet).get(tile.tileIndex).collision;
+
+                    mapTileNum[Integer.parseInt(values[2])][Integer.parseInt(values[3])] = tile;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
-//        try {
-//            InputStream is = getClass().getResourceAsStream(mapPath);
-//            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-//
-//            int col = 0;
-//            int row = 0;
-//            while (col < gp.maxWorldCol && row < gp.maxWorldRow){
-//                String line = br.readLine();
-//
-//                while(col < gp.maxWorldCol) {
-//                    String[] numbers = line.split(" ");
-//
-//                    int num = Integer.parseInt(numbers[col]);
-//
-//                    mapTileNum[col][row] = num;
-//                    col++;
-//                }
-//
-//                if (col == gp.maxWorldCol) {
-//                    col = 0;
-//                    row++;
-//                }
-//            }
-//            br.close();
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
     /**
@@ -100,21 +91,22 @@ public class TileManager {
         int worldCol = 0;
         int worldRow = 0;
 
+        //Draw the tiles on screen
         while (worldCol < gp.maxWorldCol && worldRow < gp.maxWorldRow) {
             Tile tile = mapTileNum[worldCol][worldRow];
             if (tile != null) {
-                int worldX = worldCol * gp.tileSize;
-                int worldY = worldRow * gp.tileSize;
+                int worldX = worldCol * GamePanel.tileSize;
+                int worldY = worldRow * GamePanel.tileSize;
                 int screenX = worldX - (int) gp.player.worldX + gp.player.screenX; //screenX is an offset accounting for the centering of the player
                 int screenY = worldY - (int) gp.player.worldY + gp.player.screenY; //screenY is an offset accounting for the centering of the player
 
                 //Draw tile if in bounds of screen
-                if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
-                        worldX - (2 * gp.tileSize) < gp.player.worldX + gp.player.screenX &&
-                        worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
-                        worldY - (2 * gp.tileSize) < gp.player.worldY + gp.player.screenY) {
+                if (worldX + GamePanel.tileSize > gp.player.worldX - gp.player.screenX &&
+                        worldX - (2 * GamePanel.tileSize) < gp.player.worldX + gp.player.screenX &&
+                        worldY + GamePanel.tileSize > gp.player.worldY - gp.player.screenY &&
+                        worldY - (2 * GamePanel.tileSize) < gp.player.worldY + gp.player.screenY) {
 
-                    g2.drawImage(tile.image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+                    g2.drawImage(tile.image, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
                 }
             }
 
@@ -124,6 +116,17 @@ public class TileManager {
                 worldCol = 0;
                 worldRow++;
             }
+        }
+
+        //Debug Drawings
+        for (TowerPlacer towerLocation : towerLocations) {
+            g2.setColor(Color.red);
+            g2.drawOval(
+                    (int)(towerLocation.solidArea.getCenterX() - towerLocation.solidArea.getRadius() - gp.player.worldX + gp.player.screenX),
+                    (int)(towerLocation.solidArea.getCenterY() - towerLocation.solidArea.getRadius() - gp.player.worldY + gp.player.screenY),
+                    (int)(towerLocation.solidArea.getRadius() * 2),
+                    (int)(towerLocation.solidArea.getRadius() * 2)
+            );
         }
     }
 }

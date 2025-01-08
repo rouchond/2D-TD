@@ -21,6 +21,8 @@ public class Entity {
      * The max speed of the entity
      */
     public float maxSpeed;
+
+    public EntityUtil.Direction direction;
     /**
      * Area that represents the collision box relative to the screen
      */

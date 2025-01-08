@@ -79,9 +79,10 @@ public class GamePanel extends JPanel implements Runnable{
     Thread gameThread;
     KeyHandler keyH = new KeyHandler();
     TileManager tileM = new TileManager(this);
+    CollisionHandler colH = new CollisionHandler(this);
 
     // Entities
-    public Player player = new Player(this, keyH);
+    public Player player = new Player(this, keyH, colH);
 
     /**
      * An empty black game window that can listen for key inputs
@@ -89,7 +90,8 @@ public class GamePanel extends JPanel implements Runnable{
      */
     public GamePanel () {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(Color.black);
+        float[] color = Color.RGBtoHSB(25,20,30, null);
+        this.setBackground(Color.getHSBColor(color[0],color[1],color[2]));
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);

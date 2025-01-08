@@ -132,7 +132,8 @@ public class TilePanel extends JPanel implements Runnable{
      */
     public TilePanel () {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(Color.black);
+        float[] color = Color.RGBtoHSB(25,20,30, null);
+        this.setBackground(Color.getHSBColor(color[0],color[1],color[2]));
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.addMouseListener(keyH);
@@ -310,6 +311,8 @@ public class TilePanel extends JPanel implements Runnable{
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g;
+
+        // Tile Editor
         tileE.drawPlaced(g2);
         if (tileIndex != 0) {
             tileE.drawMouse(g2, tileE.tiles.get(tileSet).get(tileIndex).image, currentTileCol, currentTileRow);

@@ -1,6 +1,8 @@
 package player;
 
 import entity.Entity;
+import entity.EntityUtil;
+import main.CollisionHandler;
 import main.GamePanel;
 import main.KeyHandler;
 
@@ -24,20 +26,24 @@ public class Player extends Entity {
 
     public GamePanel gp;
     KeyHandler keyH;
+    CollisionHandler colH;
 
     /**
      * Create the player
      * @param gp GamePanel
      * @param keyH KeyHandler
      */
-    public Player(GamePanel gp, KeyHandler keyH){
+    public Player(GamePanel gp, KeyHandler keyH, CollisionHandler colH){
         this.gp = gp;
         this.keyH = keyH;
+        this.colH = colH;
 
         screenX = gp.screenWidth/2 - (gp.tileSize);
         screenY = gp.screenHeight/2 - (gp.tileSize);
 
-        solidArea = new Rectangle();
+        solidArea = new Rectangle(8, 16, 32, 32);
+        solidAreaWorldX = solidArea.x;
+        solidAreaWorldY = solidArea.y;
 
         setDefaultValues();
         getPlayerImage();
@@ -47,9 +53,10 @@ public class Player extends Entity {
      * Set initial position and speed of the player
      */
     private void setDefaultValues(){
-        worldX = gp.tileSize * 5;
-        worldY = 0;
+        worldX = gp.tileSize * 7;
+        worldY = gp.tileSize * 5;
         maxSpeed = 5;
+        direction = EntityUtil.Direction.DOWN;
     }
 
     /**
@@ -68,14 +75,36 @@ public class Player extends Entity {
      * Logic that is updated every frame
      */
     public void update() {
-        if (keyH.downPressed) {
-            worldY += maxSpeed;
-        } else if (keyH.upPressed) {
-            worldY -= maxSpeed;
-        } else if (keyH.rightPressed) {
-            worldX += maxSpeed;
-        } else if (keyH.leftPressed) {
-            worldX -= maxSpeed;
+        if (keyH.keyDown) {
+            if (keyH.downPressed) {
+                direction = EntityUtil.Direction.DOWN;
+            } else if (keyH.upPressed) {
+                direction = EntityUtil.Direction.UP;
+            } else if (keyH.rightPressed) {
+                direction = EntityUtil.Direction.RIGHT;
+            } else if (keyH.leftPressed) {
+                direction = EntityUtil.Direction.LEFT;
+            }
+
+            collisionOn = false;
+            colH.checkTile(this);
+
+            if (!collisionOn) {
+                switch (direction) {
+                    case UP:
+                        worldY -= maxSpeed;
+                        break;
+                    case DOWN:
+                        worldY += maxSpeed;
+                        break;
+                    case LEFT:
+                        worldX -= maxSpeed;
+                        break;
+                    case RIGHT:
+                        worldX += maxSpeed;
+                        break;
+                }
+            }
         }
     }
 
@@ -85,5 +114,9 @@ public class Player extends Entity {
      */
     public void draw(Graphics2D g2) {
         g2.drawImage(img, screenX, screenY, gp.tileSize, gp.tileSize, null);
+
+        //Debug Drawings
+        g2.setColor(Color.red);
+        g2.drawRect(solidArea.x + screenX, solidArea.y + screenY, solidArea.width, solidArea.height);
     }
 }

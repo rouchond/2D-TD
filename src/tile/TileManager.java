@@ -13,7 +13,7 @@ public class TileManager {
     GamePanel gp;
 
     /**
-     * A hashmap of all the tiles in the world
+     * A hashmap of all the possible tiles
      */
     HashMap<String, ArrayList<Tile>> tiles;
 
@@ -31,7 +31,7 @@ public class TileManager {
         mapTileNum = new Tile[gp.maxWorldCol][gp.maxWorldRow];
         TileLoader tileLoader = new TileLoader();
         tiles = tileLoader.Tiles;
-        loadMap("res/maps/generatedMap.txt");
+        loadMap("res/maps/world.txt");
     }
 
     /**
@@ -45,11 +45,14 @@ public class TileManager {
                 // Split the line by comma
                 String[] values = line.split(",");
 
-                // Create object from values
+                // Create tile from the predefined properties
                 Tile tile = new Tile();
                 tile.tileSet = values[0];
                 tile.tileIndex = Integer.parseInt(values[1]);
+
                 tile.image = tiles.get(tile.tileSet).get(tile.tileIndex).image;
+                tile.collision = tiles.get(tile.tileSet).get(tile.tileIndex).collision;
+
                 mapTileNum[Integer.parseInt(values[2])][Integer.parseInt(values[3])] = tile;
             }
         } catch (IOException e) {

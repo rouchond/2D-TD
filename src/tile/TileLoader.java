@@ -46,9 +46,12 @@ public class TileLoader {
                         Tile tile = new Tile();
                         tile.image = img;
                         tile.tileSet = "dungeon";
+                        if (i > 1 && i < 16) {
+                            tile.collision = true;
+                        }
                         tile.tileIndex = i;
-                        i++;
                         Tiles.get("dungeon").add(tile);
+                        i++;
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

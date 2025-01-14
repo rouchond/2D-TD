@@ -1,10 +1,14 @@
 package player;
 
+import Util.Vector2;
 import entity.Entity;
 import entity.EntityUtil;
 import main.CollisionHandler;
 import main.GamePanel;
 import main.KeyHandler;
+import main.PhysicsHandler;
+import player.states.Idle;
+import player.states.Moving;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -27,6 +31,11 @@ public class Player extends Entity {
     public GamePanel gp;
     KeyHandler keyH;
     CollisionHandler colH;
+    PhysicsHandler physH;
+    PlayerController pController;
+
+    public Idle idle;
+    public Moving moving;
 
     /**
      * Create the player
@@ -37,6 +46,11 @@ public class Player extends Entity {
         this.gp = gp;
         this.keyH = keyH;
         this.colH = colH;
+        this.physH = new PhysicsHandler(this, new Vector2(1,1));
+        this.pController = new PlayerController(this, this.keyH);
+
+        this.idle = new Idle(this.keyH);
+        this.moving = new Moving(this.keyH);
 
         screenX = gp.screenWidth/2 - (GamePanel.tileSize);
         screenY = gp.screenHeight/2 - (GamePanel.tileSize);
@@ -75,37 +89,9 @@ public class Player extends Entity {
      * Logic that is updated every frame
      */
     public void update() {
-        if (keyH.keyDown && !keyH.ePressed) {
-            if (keyH.downPressed) {
-                direction = EntityUtil.Direction.DOWN;
-            } else if (keyH.upPressed) {
-                direction = EntityUtil.Direction.UP;
-            } else if (keyH.rightPressed) {
-                direction = EntityUtil.Direction.RIGHT;
-            } else if (keyH.leftPressed) {
-                direction = EntityUtil.Direction.LEFT;
-            }
-
-            collisionOn = false;
-            colH.checkTile(this);
-
-            if (!collisionOn) {
-                switch (direction) {
-                    case UP:
-                        worldY -= maxSpeed;
-                        break;
-                    case DOWN:
-                        worldY += maxSpeed;
-                        break;
-                    case LEFT:
-                        worldX -= maxSpeed;
-                        break;
-                    case RIGHT:
-                        worldX += maxSpeed;
-                        break;
-                }
-            }
-        }
+        collisionOn = false;
+        colH.checkTile(this);
+        pController.update();
     }
 
     /**

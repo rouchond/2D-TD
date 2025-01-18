@@ -72,7 +72,7 @@ public class GamePanel extends JPanel implements Runnable{
     /**
      * Elapsed time since last update
      */
-    public double deltaTime;
+    public float deltaTime;
 
     // System
 
@@ -123,7 +123,7 @@ public class GamePanel extends JPanel implements Runnable{
      */
     @Override
     public void run() {
-        double drawInterval = (double) 1000000000 / fps;
+        float drawInterval = (float) 1000000000 / fps;
         long lastTime = System.nanoTime();
         long currentTime;
         long timer = 0;

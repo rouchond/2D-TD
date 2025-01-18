@@ -16,11 +16,7 @@ public class Entity {
     /**
      * Speed that the entity is moving
      */
-    public float currentSpeed;
-    /**
-     * The max speed of the entity
-     */
-    public float maxSpeed;
+    public float speed;
 
     public EntityUtil.Direction direction;
     /**

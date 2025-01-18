@@ -46,11 +46,11 @@ public class Player extends Entity {
         this.gp = gp;
         this.keyH = keyH;
         this.colH = colH;
-        this.physH = new PhysicsHandler(this, new Vector2(1,1));
+        this.physH = new PhysicsHandler(this, gp);
         this.pController = new PlayerController(this, this.keyH);
 
-        this.idle = new Idle(this.keyH);
-        this.moving = new Moving(this.keyH);
+        this.idle = new Idle(this.keyH, physH);
+        this.moving = new Moving(this.keyH, this.physH);
 
         screenX = gp.screenWidth/2 - (GamePanel.tileSize);
         screenY = gp.screenHeight/2 - (GamePanel.tileSize);
@@ -59,6 +59,7 @@ public class Player extends Entity {
         solidAreaWorldX = solidArea.x;
         solidAreaWorldY = solidArea.y;
 
+        pController.setupState(idle);
         setDefaultValues();
         getPlayerImage();
     }
@@ -69,7 +70,7 @@ public class Player extends Entity {
     private void setDefaultValues(){
         worldX = GamePanel.tileSize * 7;
         worldY = GamePanel.tileSize * 5;
-        maxSpeed = 5;
+        speed = 5;
         direction = EntityUtil.Direction.DOWN;
     }
 

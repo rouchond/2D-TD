@@ -17,7 +17,13 @@ public class Vector2 {
         this.y = y;
     }
 
-    public double normalize () {
-        return (1)/(Math.sqrt(Math.pow(x,2) + Math.pow(y,2)));
+    public Vector2 normalize () {
+        float mag = (float) ((Math.sqrt(x * x + y * y)));
+        if (mag != 0) {
+            return new Vector2(x / mag, y / mag);
+        } else {
+            return this;
+        }
+
     }
 }

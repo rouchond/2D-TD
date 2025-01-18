@@ -1,17 +1,23 @@
 package player.states;
 
+import Util.Vector2;
 import entity.EntityUtil;
+import main.PhysicsHandler;
 import main.State;
 import main.KeyHandler;
 import player.Player;
 import player.PlayerController;
 
+import static entity.EntityUtil.directionVectors;
+
 public class Moving implements State<PlayerController> {
 
     KeyHandler keyH;
+    PhysicsHandler physH;
 
-    public Moving (KeyHandler keyH) {
+    public Moving (KeyHandler keyH, PhysicsHandler physH) {
         this.keyH = keyH;
+        this.physH = physH;
     }
 
     @Override
@@ -21,9 +27,10 @@ public class Moving implements State<PlayerController> {
 
     @Override
     public void updateState(PlayerController controller) {
-        if (controller.player.currentSpeed != 0 && !keyH.keyDown) {
+        if (keyH.keyDown) {
             updateDirection(controller.player);
-            move();
+            move(controller.player);
+            physH.update();
         }
         else {
             controller.changeState(controller.player.idle);
@@ -45,6 +52,7 @@ public class Moving implements State<PlayerController> {
             } else if (keyH.leftPressed) {
                 player.direction = EntityUtil.Direction.UP_LEFT;
             } else {
+                System.out.println("up");
                 player.direction = EntityUtil.Direction.UP;
             }
 
@@ -54,24 +62,23 @@ public class Moving implements State<PlayerController> {
             } else if (keyH.leftPressed) {
                 player.direction = EntityUtil.Direction.DOWN_LEFT;
             } else {
+                System.out.println("down");
                 player.direction = EntityUtil.Direction.DOWN;
             }
 
         } else if (keyH.rightPressed) {
             player.direction = EntityUtil.Direction.RIGHT;
+            System.out.println("right");
         } else if (keyH.leftPressed) {
             player.direction = EntityUtil.Direction.LEFT;
+            System.out.println("left");
         }
     }
 
     /**
-     *
+     * Sets the velocity of the player
      */
     private void move (Player player) {
-        switch (player.direction) {
-            case UP:
-
-                break;
-        }
+        physH.setVelocity(directionVectors.get(player.direction).normalize());
     }
 }

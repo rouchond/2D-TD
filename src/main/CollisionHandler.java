@@ -2,7 +2,6 @@ package main;
 
 import entity.Entity;
 import entity.EntityUtil;
-import player.Player;
 import tile.Tile;
 
 public class CollisionHandler {
@@ -34,7 +33,7 @@ public class CollisionHandler {
 
         switch (entity.direction) {
             case EntityUtil.Direction.UP:
-                entityTopRow = (int)((entityTopWorldY - entity.currentSpeed)/GamePanel.tileSize);
+                entityTopRow = (int)((entityTopWorldY - entity.speed)/GamePanel.tileSize);
                 tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
                 tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
 
@@ -45,8 +44,12 @@ public class CollisionHandler {
                 }
                 break;
 
+            case UP_LEFT:
+                break;
+            case UP_RIGHT:
+                break;
             case EntityUtil.Direction.DOWN:
-                entityBottomRow = (int)((entityBottomWorldY + entity.currentSpeed)/GamePanel.tileSize);
+                entityBottomRow = (int)((entityBottomWorldY + entity.speed)/GamePanel.tileSize);
                 tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
                 tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
 
@@ -56,8 +59,12 @@ public class CollisionHandler {
                     entity.collisionOn = true;
                 }
                 break;
+            case DOWN_LEFT:
+                break;
+            case DOWN_RIGHT:
+                break;
             case EntityUtil.Direction.LEFT:
-                entityLeftCol = (int)((entityLeftWorldX - entity.currentSpeed)/GamePanel.tileSize);
+                entityLeftCol = (int)((entityLeftWorldX - entity.speed)/GamePanel.tileSize);
                 tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
                 tileNum2 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
 
@@ -68,7 +75,7 @@ public class CollisionHandler {
                 }
                 break;
             case EntityUtil.Direction.RIGHT:
-                entityRightCol = (int)((entityRightWorldX + entity.currentSpeed)/GamePanel.tileSize);
+                entityRightCol = (int)((entityRightWorldX + entity.speed)/GamePanel.tileSize);
                 tileNum1 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
                 tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
 

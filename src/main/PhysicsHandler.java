@@ -13,24 +13,36 @@ public class PhysicsHandler {
     /**
      * The velocity of the entity without forces applied
      */
-    private final Vector2 defaultVelocity;
+    public final Vector2 defaultVelocity = new Vector2(0,0);
 
     Entity entity;
+    GamePanel gp;
 
-    public PhysicsHandler (Entity entity, Vector2 velocity) {
+    public PhysicsHandler (Entity entity, GamePanel gp) {
         this.entity = entity;
-        this.velocity = velocity;
-        this.defaultVelocity = velocity;
+        this.velocity = defaultVelocity;
+        this.gp = gp;
     }
 
-    public void addVelocity (float velocity) {
-        entity.currentSpeed = Math.max(entity.currentSpeed + velocity, entity.maxSpeed);
+    /**
+     * Sets the velocity of the entity
+     * @param newVelocity The direction that the entity is moving
+     */
+    public void setVelocity (Vector2 newVelocity) {
+        velocity.x = (newVelocity.x * entity.speed * gp.deltaTime);
+        velocity.y = (newVelocity.y * entity.speed * gp.deltaTime);
     }
 
-    private void resetVelocity () {
+    /**
+     *
+     */
+    public void resetVelocity () {
         velocity = defaultVelocity;
     }
 
+    /**
+     *
+     */
     public void update () {
         entity.worldX += velocity.x;
         entity.worldY += velocity.y;

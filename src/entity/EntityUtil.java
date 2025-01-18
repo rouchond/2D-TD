@@ -19,6 +19,9 @@ public class EntityUtil {
         RIGHT
     }
 
+    /**
+     * The vectors associated with each direction
+     */
     public static final HashMap<Direction, Vector2> directionVectors;
     static {
         HashMap<Direction, Vector2> map = new HashMap<>();

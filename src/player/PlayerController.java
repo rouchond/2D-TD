@@ -1,18 +1,18 @@
 package player;
 
 import entity.EntityController;
+import main.CollisionHandler;
 import main.KeyHandler;
 import main.State;
 
 public class PlayerController implements EntityController<PlayerController> {
 
     public Player player;
-    KeyHandler keyH;
+    CollisionHandler colH;
     public State<PlayerController> currentState;
 
-    public PlayerController (Player player, KeyHandler keyH) {
+    public PlayerController (Player player) {
         this.player = player;
-        this.keyH = keyH;
     }
 
 

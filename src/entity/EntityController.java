@@ -7,9 +7,7 @@ public interface EntityController<T extends EntityController<T>> {
     /**
      * The state that the entity is in
      */
-    public State<?> currentState = null;
-
-
+    State<?> currentState = null;
 
 
     /**
@@ -27,6 +25,6 @@ public interface EntityController<T extends EntityController<T>> {
     /**
      * The logic of the entity that needs to be updated every frame
      */
-    public void update();
+    void update();
 
 }

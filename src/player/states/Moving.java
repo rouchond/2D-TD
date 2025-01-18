@@ -2,6 +2,7 @@ package player.states;
 
 import Util.Vector2;
 import entity.EntityUtil;
+import main.CollisionHandler;
 import main.PhysicsHandler;
 import main.State;
 import main.KeyHandler;
@@ -14,10 +15,12 @@ public class Moving implements State<PlayerController> {
 
     KeyHandler keyH;
     PhysicsHandler physH;
+    CollisionHandler colH;
 
-    public Moving (KeyHandler keyH, PhysicsHandler physH) {
+    public Moving (KeyHandler keyH, PhysicsHandler physH, CollisionHandler colH) {
         this.keyH = keyH;
         this.physH = physH;
+        this.colH = colH;
     }
 
     @Override
@@ -29,6 +32,7 @@ public class Moving implements State<PlayerController> {
     public void updateState(PlayerController controller) {
         if (keyH.keyDown) {
             updateDirection(controller.player);
+            colH.checkTile(controller.player);
             move(controller.player);
             physH.update();
         }
@@ -52,7 +56,6 @@ public class Moving implements State<PlayerController> {
             } else if (keyH.leftPressed) {
                 player.direction = EntityUtil.Direction.UP_LEFT;
             } else {
-                System.out.println("up");
                 player.direction = EntityUtil.Direction.UP;
             }
 
@@ -62,16 +65,13 @@ public class Moving implements State<PlayerController> {
             } else if (keyH.leftPressed) {
                 player.direction = EntityUtil.Direction.DOWN_LEFT;
             } else {
-                System.out.println("down");
                 player.direction = EntityUtil.Direction.DOWN;
             }
 
         } else if (keyH.rightPressed) {
             player.direction = EntityUtil.Direction.RIGHT;
-            System.out.println("right");
         } else if (keyH.leftPressed) {
             player.direction = EntityUtil.Direction.LEFT;
-            System.out.println("left");
         }
     }
 

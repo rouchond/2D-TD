@@ -13,7 +13,7 @@ public class PhysicsHandler {
     /**
      * The velocity of the entity without forces applied
      */
-    public final Vector2 defaultVelocity = new Vector2(0,0);
+    private final Vector2 defaultVelocity = new Vector2(0,0);
 
     Entity entity;
     GamePanel gp;
@@ -34,17 +34,21 @@ public class PhysicsHandler {
     }
 
     /**
-     *
+     * Sets the velocity to the vector (0,0)
      */
     public void resetVelocity () {
         velocity = defaultVelocity;
     }
 
     /**
-     *
+     * Checks collisions to see if a player can move based on the velocity
      */
     public void update () {
-        entity.worldX += velocity.x;
-        entity.worldY += velocity.y;
+        if (!entity.collisionOn) {
+            entity.worldX += velocity.x;
+            entity.worldY += velocity.y;
+        } else {
+            resetVelocity();
+        }
     }
 }

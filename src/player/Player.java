@@ -47,10 +47,10 @@ public class Player extends Entity {
         this.keyH = keyH;
         this.colH = colH;
         this.physH = new PhysicsHandler(this, gp);
-        this.pController = new PlayerController(this, this.keyH);
+        this.pController = new PlayerController(this);
 
         this.idle = new Idle(this.keyH, physH);
-        this.moving = new Moving(this.keyH, this.physH);
+        this.moving = new Moving(this.keyH, this.physH, this.colH);
 
         screenX = gp.screenWidth/2 - (GamePanel.tileSize);
         screenY = gp.screenHeight/2 - (GamePanel.tileSize);
@@ -91,7 +91,6 @@ public class Player extends Entity {
      */
     public void update() {
         collisionOn = false;
-        colH.checkTile(this);
         pController.update();
     }
 
@@ -103,7 +102,7 @@ public class Player extends Entity {
         g2.drawImage(img, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
 
         //Debug Drawings
-        g2.setColor(Color.red);
-        g2.drawRect(solidArea.x + screenX, solidArea.y + screenY, solidArea.width, solidArea.height);
+//        g2.setColor(Color.red);
+//        g2.drawRect(solidArea.x + screenX, solidArea.y + screenY, solidArea.width, solidArea.height);
     }
 }

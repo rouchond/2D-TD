@@ -28,7 +28,7 @@ public class CollisionHandler {
         int entityTopRow = (int) entityTopWorldY/GamePanel.tileSize;
         int entityBottomRow = (int) entityBottomWorldY/GamePanel.tileSize;
 
-        Tile tileNum1, tileNum2;
+        Tile tileNum1, tileNum2, tileNum3;
         boolean isColliding;
 
         switch (entity.direction) {
@@ -45,8 +45,30 @@ public class CollisionHandler {
                 break;
 
             case UP_LEFT:
+                entityTopRow = (int)((entityTopWorldY - entity.speed)/GamePanel.tileSize);
+                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
+                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
+                entityLeftCol = (int)((entityLeftWorldX - entity.speed)/GamePanel.tileSize);
+                tileNum3 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
+
+                isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision || (tileNum2 != null && tileNum3.collision));
+
+                if (isColliding){
+                    entity.collisionOn = true;
+                }
                 break;
             case UP_RIGHT:
+                entityTopRow = (int)((entityTopWorldY - entity.speed)/GamePanel.tileSize);
+                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
+                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
+                entityRightCol = (int)((entityRightWorldX + entity.speed)/GamePanel.tileSize);
+                tileNum3 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
+
+                isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision || (tileNum2 != null && tileNum3.collision));
+
+                if (isColliding){
+                    entity.collisionOn = true;
+                }
                 break;
             case EntityUtil.Direction.DOWN:
                 entityBottomRow = (int)((entityBottomWorldY + entity.speed)/GamePanel.tileSize);
@@ -60,8 +82,30 @@ public class CollisionHandler {
                 }
                 break;
             case DOWN_LEFT:
+                entityBottomRow = (int)((entityBottomWorldY + entity.speed)/GamePanel.tileSize);
+                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
+                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
+                entityLeftCol = (int)((entityLeftWorldX - entity.speed)/GamePanel.tileSize);
+                tileNum3 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
+
+                isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision || (tileNum2 != null && tileNum3.collision));
+
+                if (isColliding){
+                    entity.collisionOn = true;
+                }
                 break;
             case DOWN_RIGHT:
+                entityBottomRow = (int)((entityBottomWorldY + entity.speed)/GamePanel.tileSize);
+                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
+                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
+                entityRightCol = (int)((entityRightWorldX + entity.speed)/GamePanel.tileSize);
+                tileNum3 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
+
+                isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision || (tileNum2 != null && tileNum3.collision));
+
+                if (isColliding){
+                    entity.collisionOn = true;
+                }
                 break;
             case EntityUtil.Direction.LEFT:
                 entityLeftCol = (int)((entityLeftWorldX - entity.speed)/GamePanel.tileSize);

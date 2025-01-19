@@ -1,5 +1,6 @@
 package main;
 
+import enemies.EnemyHandler;
 import player.Player;
 import tile.TileManager;
 import tower.TowerPlacer;
@@ -83,6 +84,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     // Entities
     public Player player = new Player(this, keyH, colH);
+    EnemyHandler enemyH = new EnemyHandler(this, colH);
 
     /**
      * An empty black game window that can listen for key inputs
@@ -161,6 +163,9 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Tile Manager
         tileM.draw(g2);
+
+        // Enemies
+        enemyH.draw(g2);
 
         // Player
         player.draw(g2);

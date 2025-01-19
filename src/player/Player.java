@@ -69,7 +69,7 @@ public class Player extends Entity {
      */
     private void setDefaultValues(){
         worldX = GamePanel.tileSize * 7;
-        worldY = GamePanel.tileSize * 5;
+        worldY = GamePanel.tileSize * 10;
         speed = 5;
         direction = EntityUtil.Direction.DOWN;
     }

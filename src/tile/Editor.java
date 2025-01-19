@@ -1,7 +1,5 @@
 package tile;
 
-import main.GamePanel;
-
 import javax.swing.*;
 
 public class Editor {

@@ -32,4 +32,14 @@ public class Entity {
      */
     public boolean collisionOn;
 
+    /**
+     * Determines whether an entity is hostile to the player
+     */
+    public boolean hostile;
+
+    /**
+     * Health of the entity
+     */
+    public int health;
+
 }

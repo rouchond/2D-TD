@@ -115,6 +115,7 @@ public class GamePanel extends JPanel implements Runnable{
         for (TowerPlacer towerLocation : tileM.towerLocations) {
             towerLocation.update(player);
         }
+        enemyH.update();
         tileM.update();
         keyH.update();
     }

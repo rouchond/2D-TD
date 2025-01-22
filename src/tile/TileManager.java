@@ -110,7 +110,9 @@ public class TileManager {
             // Set the neighbors for each tile
             for (Tile[] tileRow : mapTileNum) {
                 for (Tile tile : tileRow) {
-                    tile.setNeighbors(this);
+                    if (tile != null) {
+                        tile.setNeighbors(this);
+                    }
                 }
             }
 

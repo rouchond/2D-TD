@@ -17,6 +17,11 @@ public class Pathfinding {
         PathNode startNode = createPathNode(startTile);
         PathNode targetNode = createPathNode(targetTile);
 
+        // If either start or target is null/unwalkable, no path is possible
+        if (!isWalkable(startTile) || !isWalkable(targetTile)) {
+            return null;
+        }
+
         ArrayList<PathNode> openList = new ArrayList<>();
         ArrayList<PathNode> closedList = new ArrayList<>();
 

@@ -1,9 +1,11 @@
 package enemies.placeholder;
 
+import enemies.placeholder.states.Moving;
 import entity.Entity;
 import main.CollisionHandler;
 import main.GamePanel;
 import main.PhysicsHandler;
+import main.State;
 import player.Player;
 import tile.TileManager;
 
@@ -16,6 +18,7 @@ public class Enemy01 extends Entity {
 
     GamePanel gp;
 
+    TileManager tileM;
 
     Player player;
 
@@ -25,18 +28,26 @@ public class Enemy01 extends Entity {
 
     PlaceholderController eController;
 
-    public Enemy01 (GamePanel gp, CollisionHandler colH) {
+    public Moving moving;
+
+    public boolean isMoving;
+
+    public Enemy01 (GamePanel gp, CollisionHandler colH, TileManager tileM) {
         this.gp = gp;
         this.colH = colH;
+        this.tileM = tileM;
 
         this.player  = this.gp.player;
         this.physH = new PhysicsHandler(this, gp);
+
+        this.eController = new PlaceholderController(gp, this);
+        this.moving = new Moving(this.gp,this.physH, this.colH, this.tileM);
 
         solidArea = new Rectangle(8, 16, 32, 32);
         solidAreaWorldX = solidArea.x;
         solidAreaWorldY = solidArea.y;
 
-        //eController.setupState();
+        eController.setupState(moving);
         getEnemyImage();
         setDefaultValues();
     }

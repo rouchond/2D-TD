@@ -13,19 +13,23 @@ public class EnemyHandler {
 
     GamePanel gp;
 
-    CollisionHandler colH;
+    TileManager tileM;
 
+    CollisionHandler colH;
 
     ArrayList<Enemy01> enemies = new ArrayList<>();
 
-    public EnemyHandler (GamePanel gp, CollisionHandler colH) {
+    public EnemyHandler (GamePanel gp, CollisionHandler colH, TileManager tileM) {
         this.gp = gp;
         this.colH = colH;
-        enemies.add(new Enemy01(gp, colH));
+        this.tileM = tileM;
+        enemies.add(new Enemy01(gp, colH, tileM));
     }
 
     public void update () {
-
+        for (Enemy01 enemy : enemies) {
+            enemy.update();
+        }
     }
 
     public void draw (Graphics2D g2) {

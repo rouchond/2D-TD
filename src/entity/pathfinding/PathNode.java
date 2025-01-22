@@ -13,7 +13,7 @@ public class PathNode {
     }
 
     public boolean isWalkable() {
-        return !tile.collision;  // Use tile's collision property
+        return !(tile == null) && !tile.collision;  // Use tile's collision property
     }
 
     public float getF() {

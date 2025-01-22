@@ -10,8 +10,9 @@ public class PlaceholderController implements EntityController<PlaceholderContro
     public Enemy01 enemy;
     GamePanel gp;
 
-    public PlaceholderController (GamePanel gp) {
+    public PlaceholderController (GamePanel gp, Enemy01 enemy) {
         this.gp = gp;
+        this.enemy = enemy;
     }
 
     public State<PlaceholderController> currentState;

@@ -84,7 +84,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     // Entities
     public Player player = new Player(this, keyH, colH);
-    EnemyHandler enemyH = new EnemyHandler(this, colH);
+    EnemyHandler enemyH = new EnemyHandler(this, colH, tileM);
 
     /**
      * An empty black game window that can listen for key inputs

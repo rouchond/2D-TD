@@ -42,12 +42,12 @@ public class TileManager {
     public ArrayList<TowerPlacer> removeTowerQueue = new ArrayList<>();
 
     /**
-     * The position of a tile in the tile array
+     * The position of a tile in the tile array [col][row]
      */
     public Tile[][] mapTileNum;
 
     /**
-     *
+     * Creates the Tile Grid and loads each tile into the grid
      * @param gp
      */
     public TileManager(GamePanel gp, KeyHandler keyH) {
@@ -85,6 +85,8 @@ public class TileManager {
                     TowerPlacer tile = new TowerPlacer(Integer.parseInt(values[2]), Integer.parseInt(values[3]), keyH, this);
                     tile.tileSet = values[0];
                     tile.tileIndex = Integer.parseInt(values[1]);
+                    tile.tileCol = Integer.parseInt(values[2]);
+                    tile.tileRow = Integer.parseInt(values[3]);
 
                     tile.image = tiles.get(tile.tileSet).get(tile.tileIndex).image;
                     tile.collision = tiles.get(tile.tileSet).get(tile.tileIndex).collision;
@@ -95,6 +97,8 @@ public class TileManager {
                     Tile tile = new Tile();
                     tile.tileSet = values[0];
                     tile.tileIndex = Integer.parseInt(values[1]);
+                    tile.tileCol = Integer.parseInt(values[2]);
+                    tile.tileRow = Integer.parseInt(values[3]);
 
                     tile.image = tiles.get(tile.tileSet).get(tile.tileIndex).image;
                     tile.collision = tiles.get(tile.tileSet).get(tile.tileIndex).collision;
@@ -102,6 +106,14 @@ public class TileManager {
                     mapTileNum[Integer.parseInt(values[2])][Integer.parseInt(values[3])] = tile;
                 }
             }
+
+            // Set the neighbors for each tile
+            for (Tile[] tileRow : mapTileNum) {
+                for (Tile tile : tileRow) {
+                    tile.setNeighbors(this);
+                }
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }

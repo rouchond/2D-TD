@@ -5,6 +5,7 @@ import main.CollisionHandler;
 import main.GamePanel;
 import main.PhysicsHandler;
 import player.Player;
+import tile.TileManager;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,9 +15,15 @@ import java.util.Objects;
 public class Enemy01 extends Entity {
 
     GamePanel gp;
+
+
     Player player;
+
     CollisionHandler colH;
+
     PhysicsHandler physH;
+
+    PlaceholderController eController;
 
     public Enemy01 (GamePanel gp, CollisionHandler colH) {
         this.gp = gp;
@@ -29,6 +36,7 @@ public class Enemy01 extends Entity {
         solidAreaWorldX = solidArea.x;
         solidAreaWorldY = solidArea.y;
 
+        //eController.setupState();
         getEnemyImage();
         setDefaultValues();
     }
@@ -50,7 +58,8 @@ public class Enemy01 extends Entity {
     }
 
     public void update () {
-
+        collisionOn = false;
+        eController.update();
     }
 
     public void draw (Graphics2D g2) {

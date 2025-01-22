@@ -4,6 +4,7 @@ import enemies.placeholder.Enemy01;
 import main.CollisionHandler;
 import main.GamePanel;
 import main.PhysicsHandler;
+import tile.TileManager;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -11,8 +12,10 @@ import java.util.ArrayList;
 public class EnemyHandler {
 
     GamePanel gp;
+
     CollisionHandler colH;
-    PhysicsHandler physH;
+
+
     ArrayList<Enemy01> enemies = new ArrayList<>();
 
     public EnemyHandler (GamePanel gp, CollisionHandler colH) {

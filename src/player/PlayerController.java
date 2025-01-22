@@ -8,7 +8,6 @@ import main.State;
 public class PlayerController implements EntityController<PlayerController> {
 
     public Player player;
-    CollisionHandler colH;
     public State<PlayerController> currentState;
 
     public PlayerController (Player player) {

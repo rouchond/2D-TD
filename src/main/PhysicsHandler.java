@@ -41,7 +41,7 @@ public class PhysicsHandler {
     }
 
     /**
-     * Checks collisions to see if a player can move based on the velocity
+     * Checks collisions to see if an entity can move based on the velocity
      */
     public void update () {
         if (!entity.collisionOn) {

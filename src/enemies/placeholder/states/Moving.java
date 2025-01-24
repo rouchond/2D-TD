@@ -12,11 +12,14 @@ import java.util.ArrayList;
 public class Moving implements State<PlaceholderController> {
 
     GamePanel gp;
-
     TileManager tileM;
     PhysicsHandler physH;
-
     CollisionHandler colH;
+
+    /**
+     * A flag that determines if the enemy should transition to the attack state
+     */
+    private boolean canAttack;
 
     public Moving (GamePanel gp, PhysicsHandler physH, CollisionHandler colH, TileManager tileM) {
         this.gp = gp;
@@ -32,12 +35,17 @@ public class Moving implements State<PlaceholderController> {
     @Override
     public void updateState(PlaceholderController controller) {
         move(controller);
-        physH.update();
+        if (canAttack) {
+            controller.changeState(controller.enemy.attack);
+        }
+        else {
+            physH.update();
+        }
     }
 
     @Override
     public void exitState(PlaceholderController controller) {
-
+        canAttack = false;
     }
 
     /**
@@ -45,10 +53,9 @@ public class Moving implements State<PlaceholderController> {
      */
     private void move (PlaceholderController controller) {
         Vector2 dir = getDirection(controller).normalize();
-        System.out.println(dir.x);
-        System.out.println(dir.y);
-        System.out.println();
-        physH.setVelocity(dir);
+        if (!canAttack) {
+            physH.setVelocity(dir);
+        }
     }
 
     /**
@@ -61,26 +68,6 @@ public class Moving implements State<PlaceholderController> {
         float directDy = gp.player.worldY - controller.enemy.worldY;
         float directDistance = (float) Math.sqrt(directDx * directDx + directDy * directDy);
 
-        // Define two distance thresholds creating a small buffer zone
-        // The enemy stops when closer than STOP_DISTANCE
-        // When stopped, it won't start moving again until the player is further than RESUME_DISTANCE
-        float STOP_DISTANCE = GamePanel.tileSize * 0.5f;
-        float RESUME_DISTANCE = GamePanel.tileSize * 0.6f;
-
-        // If we're very close to the player, stop moving
-        if (directDistance < STOP_DISTANCE) {
-            controller.enemy.isMoving = false;
-            return new Vector2(0, 0);
-        }
-        // If we're in the buffer zone and already stopped, maintain the stopped state
-        // This prevents rapid switching between moving and stopped states
-        else if (directDistance < RESUME_DISTANCE && !controller.enemy.isMoving) {
-            return new Vector2(0, 0);
-        }
-
-        // We're far enough away, so we should be moving
-        controller.enemy.isMoving = true;
-
         // Get the current tile positions of both enemy and player
         Tile startTile = getEnemyTile(controller);
         Tile targetTile = getPlayerTile();
@@ -91,13 +78,10 @@ public class Moving implements State<PlaceholderController> {
 
         // If we found a valid path with at least two tiles (current and next)
         if (path != null && path.size() > 1) {
-            // When very close to player (within 1.5 tiles), ignore pathfinding
-            // and move directly toward player's position for more natural movement
+            // When very close to player (within 1.5 tiles), activate flag to enter attack state
             if (directDistance < GamePanel.tileSize * 1.5f) {
-                return new Vector2(
-                        directDx > 0 ? 1 : directDx < 0 ? -1 : 0,  // Move right if player is to right, left if to left
-                        directDy > 0 ? 1 : directDy < 0 ? -1 : 0   // Move down if player is below, up if above
-                );
+                canAttack = true;
+                return new Vector2(0,0);
             }
             // When farther away, follow the calculated path
             else {

@@ -17,7 +17,10 @@ public class Entity {
      * Speed that the entity is moving
      */
     public float speed;
-
+    /**
+     * The speed the entity moves without any addons.
+     */
+    public float baseSpeed;
     public EntityUtil.Direction direction;
     /**
      * Area that represents the collision box relative to the screen

@@ -1,5 +1,6 @@
 package enemies.placeholder;
 
+import enemies.placeholder.states.Attack;
 import enemies.placeholder.states.Moving;
 import entity.Entity;
 import main.CollisionHandler;
@@ -30,18 +31,27 @@ public class Enemy01 extends Entity {
 
     public Moving moving;
 
-    public boolean isMoving;
+    public Attack attack;
 
-    public Enemy01 (GamePanel gp, CollisionHandler colH, TileManager tileM) {
+    private final int startX;
+
+    private final int startY;
+
+    public Enemy01 (GamePanel gp, CollisionHandler colH, TileManager tileM, int x, int y) {
         this.gp = gp;
         this.colH = colH;
         this.tileM = tileM;
+
+        this.startX = x;
+        this.startY = y;
+
 
         this.player  = this.gp.player;
         this.physH = new PhysicsHandler(this, gp);
 
         this.eController = new PlaceholderController(gp, this);
         this.moving = new Moving(this.gp,this.physH, this.colH, this.tileM);
+        this.attack = new Attack(this.gp, this.physH, this.colH);
 
         solidArea = new Rectangle(8, 16, 32, 32);
         solidAreaWorldX = solidArea.x;
@@ -53,9 +63,10 @@ public class Enemy01 extends Entity {
     }
 
     private void setDefaultValues() {
-        worldX = GamePanel.tileSize * 11;
-        worldY = GamePanel.tileSize * 4;
-        speed = 5;
+        worldX = GamePanel.tileSize * startX;
+        worldY = GamePanel.tileSize * startY;
+        baseSpeed = 5;
+        speed = baseSpeed;
         health = 10;
     }
 

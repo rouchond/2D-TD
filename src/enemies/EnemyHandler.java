@@ -23,7 +23,8 @@ public class EnemyHandler {
         this.gp = gp;
         this.colH = colH;
         this.tileM = tileM;
-        enemies.add(new Enemy01(gp, colH, tileM));
+        enemies.add(new Enemy01(gp, colH, tileM, 11, 4));
+        //enemies.add(new Enemy01(gp, colH, tileM, 8, 6));
     }
 
     public void update () {

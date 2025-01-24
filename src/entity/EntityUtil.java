@@ -36,5 +36,30 @@ public class EntityUtil {
         directionVectors = map;
     }
 
+    /**
+     *
+     */
+    public static Direction vectorToDirection (Vector2 vec) {
+        if (vec.equals(new Vector2(0,-1))) {
+            return Direction.UP;
+        } else if (vec.equals(new Vector2(-1,-1))) {
+            return Direction.UP_LEFT;
+        } else if (vec.equals(new Vector2(1,-1))) {
+            return Direction.UP_RIGHT;
+        } else if (vec.equals(new Vector2(0,1))) {
+            return Direction.DOWN;
+        } else if (vec.equals(new Vector2(-1,1))) {
+            return Direction.DOWN_LEFT;
+        } else if (vec.equals(new Vector2(1,1))) {
+            return Direction.DOWN_RIGHT;
+        } else if (vec.equals(new Vector2(1,0))) {
+            return Direction.RIGHT;
+        } else if (vec.equals(new Vector2(-1,0))) {
+            return Direction.LEFT;
+        } else {
+            return null;
+        }
+    }
+
 
 }

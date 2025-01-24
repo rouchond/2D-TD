@@ -2,6 +2,7 @@ package enemies.placeholder.states;
 
 import Util.Vector2;
 import enemies.placeholder.PlaceholderController;
+import entity.EntityUtil;
 import entity.pathfinding.Pathfinding;
 import main.*;
 import tile.Tile;
@@ -52,6 +53,10 @@ public class Moving implements State<PlaceholderController> {
      *
      */
     private void move (PlaceholderController controller) {
+        //System.out.println("Moving");
+        if (!getDirection(controller).equals(new Vector2(0,0))) {
+            controller.enemy.direction = EntityUtil.vectorToDirection(getDirection(controller));
+        }
         Vector2 dir = getDirection(controller).normalize();
         if (!canAttack) {
             physH.setVelocity(dir);

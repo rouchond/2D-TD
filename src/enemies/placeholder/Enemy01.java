@@ -3,10 +3,10 @@ package enemies.placeholder;
 import enemies.placeholder.states.Attack;
 import enemies.placeholder.states.Moving;
 import entity.Entity;
+import entity.EntityUtil;
 import main.CollisionHandler;
 import main.GamePanel;
 import main.PhysicsHandler;
-import main.State;
 import player.Player;
 import tile.TileManager;
 
@@ -47,7 +47,7 @@ public class Enemy01 extends Entity {
 
 
         this.player  = this.gp.player;
-        this.physH = new PhysicsHandler(this, gp);
+        this.physH = new PhysicsHandler(this, gp, tileM);
 
         this.eController = new PlaceholderController(gp, this);
         this.moving = new Moving(this.gp,this.physH, this.colH, this.tileM);
@@ -68,6 +68,7 @@ public class Enemy01 extends Entity {
         baseSpeed = 5;
         speed = baseSpeed;
         health = 10;
+        direction = EntityUtil.Direction.DOWN;
     }
 
     private void getEnemyImage () {
@@ -80,7 +81,7 @@ public class Enemy01 extends Entity {
     }
 
     public void update () {
-        collisionOn = false;
+        tileCollisionOn = false;
         eController.update();
     }
 

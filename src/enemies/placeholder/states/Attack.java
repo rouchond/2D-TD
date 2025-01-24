@@ -2,6 +2,7 @@ package enemies.placeholder.states;
 
 import Util.Vector2;
 import enemies.placeholder.PlaceholderController;
+import entity.EntityUtil;
 import main.CollisionHandler;
 import main.GamePanel;
 import main.PhysicsHandler;
@@ -12,7 +13,7 @@ public class Attack implements State<PlaceholderController> {
     /**
      * The speed the enemy has while attacking
      */
-    private final float attackSpeed = 15;
+    private final float attackSpeed = 16;
 
     /**
      * A flag on whether the enemy is in the process of attacking
@@ -32,7 +33,7 @@ public class Attack implements State<PlaceholderController> {
     /**
      * The longest the enemy can be attacking for (in seconds)
      */
-    private final float MAX_ATTACK_DURATION = 0.35f;
+    private final float MAX_ATTACK_DURATION = 0.15f;
 
 
     private Vector2 dir;
@@ -98,12 +99,18 @@ public class Attack implements State<PlaceholderController> {
         }
 
         dir = new Vector2(xComp, yComp);
+
+        if (!dir.equals(new Vector2(0,0))) {
+            controller.enemy.direction = EntityUtil.vectorToDirection(dir);
+        }
     }
 
     private void dashAttack(PlaceholderController controller) {
         physH.setVelocity(dir);
-        if (controller.enemy.collisionOn) {
+        physH.dash = true;
+        if (controller.enemy.tileCollisionOn) {
             isKnockback = true;
+            physH.dash = false;
             isAttacking = false;
         }
     }

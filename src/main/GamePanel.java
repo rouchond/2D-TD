@@ -83,7 +83,7 @@ public class GamePanel extends JPanel implements Runnable{
     CollisionHandler colH = new CollisionHandler(this);
 
     // Entities
-    public Player player = new Player(this, keyH, colH);
+    public Player player = new Player(this, keyH, colH, tileM);
     EnemyHandler enemyH = new EnemyHandler(this, colH, tileM);
 
     /**

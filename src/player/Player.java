@@ -1,6 +1,5 @@
 package player;
 
-import Util.Vector2;
 import entity.Entity;
 import entity.EntityUtil;
 import main.CollisionHandler;
@@ -9,6 +8,7 @@ import main.KeyHandler;
 import main.PhysicsHandler;
 import player.states.Idle;
 import player.states.Moving;
+import tile.TileManager;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -31,6 +31,7 @@ public class Player extends Entity {
     public GamePanel gp;
     KeyHandler keyH;
     CollisionHandler colH;
+    TileManager tileM;
     PhysicsHandler physH;
     PlayerController pController;
 
@@ -42,11 +43,12 @@ public class Player extends Entity {
      * @param gp GamePanel
      * @param keyH KeyHandler
      */
-    public Player(GamePanel gp, KeyHandler keyH, CollisionHandler colH){
+    public Player(GamePanel gp, KeyHandler keyH, CollisionHandler colH, TileManager tileM){
         this.gp = gp;
         this.keyH = keyH;
         this.colH = colH;
-        this.physH = new PhysicsHandler(this, gp);
+        this.tileM = tileM;
+        this.physH = new PhysicsHandler(this, gp, tileM);
         this.pController = new PlayerController(this);
 
         this.idle = new Idle(this.keyH, physH);
@@ -90,7 +92,7 @@ public class Player extends Entity {
      * Logic that is updated every frame
      */
     public void update() {
-        collisionOn = false;
+        tileCollisionOn = false;
         pController.update();
     }
 

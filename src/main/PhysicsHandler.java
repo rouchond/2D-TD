@@ -2,6 +2,8 @@ package main;
 
 import Util.Vector2;
 import entity.Entity;
+import tile.Tile;
+import tile.TileManager;
 
 public class PhysicsHandler {
 
@@ -15,13 +17,17 @@ public class PhysicsHandler {
      */
     private final Vector2 defaultVelocity = new Vector2(0,0);
 
+    public boolean dash;
+
     Entity entity;
     GamePanel gp;
+    TileManager tileM;
 
-    public PhysicsHandler (Entity entity, GamePanel gp) {
+    public PhysicsHandler (Entity entity, GamePanel gp, TileManager tileM) {
         this.entity = entity;
         this.velocity = defaultVelocity;
         this.gp = gp;
+        this.tileM = tileM;
     }
 
     /**
@@ -41,14 +47,31 @@ public class PhysicsHandler {
     }
 
     /**
-     * Checks collisions to see if an entity can move based on the velocity
+     * Moves the entity after each update call
      */
-    public void update () {
-        if (!entity.collisionOn) {
-            entity.worldX += velocity.x;
-            entity.worldY += velocity.y;
+    public void update() {
+        if (!entity.tileCollisionOn) {
+            if (!dash) {
+                entity.worldX += velocity.x;
+                entity.worldY += velocity.y;
+            }
+            else {
+                moveEntity();
+                entity.tileCollisionOn = false;
+            }
         } else {
             resetVelocity();
         }
     }
+
+    /**
+     * Moves the entity based on velocity. Does an incremental collision check.
+     * Should be used for quick and long movements
+     */
+    private void moveEntity () {
+        float[] newPos = gp.colH.checkIncremental(entity, velocity);
+        entity.worldX = newPos[0];
+        entity.worldY = newPos[1];
+    }
+
 }

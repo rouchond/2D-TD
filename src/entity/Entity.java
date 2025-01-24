@@ -31,9 +31,14 @@ public class Entity {
      */
     public double solidAreaWorldX, solidAreaWorldY;
     /**
-     * State of the collision for the entity
+     * State of the tile collision for the entity
      */
-    public boolean collisionOn;
+    public boolean tileCollisionOn;
+
+    /**
+     * State of the entity collision for the entity
+     */
+    public boolean entityCollisionOn;
 
     /**
      * Determines whether an entity is hostile to the player

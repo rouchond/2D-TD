@@ -26,4 +26,17 @@ public class Vector2 {
         }
 
     }
+
+    @Override
+    public boolean equals (Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof Vector2 vec)) {
+            return  false;
+        }
+        else {
+            return x == vec.x && y == vec.y;
+        }
+    }
 }

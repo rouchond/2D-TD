@@ -22,6 +22,17 @@ public class Moving implements State<PlaceholderController> {
      */
     private boolean canAttack;
 
+    /**
+     * A grace period when switching to this state that must be elapsed before
+     * enemy can attack
+     */
+    private final float attackGrace = 1.5f;
+
+    /**
+     * Tracks the start of the grace period
+     */
+    private long graceStartTime;
+
     public Moving (GamePanel gp, PhysicsHandler physH, CollisionHandler colH, TileManager tileM) {
         this.gp = gp;
         this.physH = physH;
@@ -30,9 +41,13 @@ public class Moving implements State<PlaceholderController> {
     }
     @Override
     public void enterState(PlaceholderController controller) {
-
+        graceStartTime = System.nanoTime();
     }
 
+    /**
+     * Uses A* pathfinding to determine the direction to move the entity. If the entity
+     * is in range for attacking, switch to the attack state.
+     */
     @Override
     public void updateState(PlaceholderController controller) {
         move(controller);
@@ -44,16 +59,20 @@ public class Moving implements State<PlaceholderController> {
         }
     }
 
+    /**
+     * Resets the can attack state when exiting the state
+     * @param controller The state controller of the entity.
+     */
     @Override
     public void exitState(PlaceholderController controller) {
         canAttack = false;
     }
 
     /**
-     *
+     * Generates a path and moves the player in that direction
+     * @param controller The state controller of the enemy
      */
     private void move (PlaceholderController controller) {
-        //System.out.println("Moving");
         if (!getDirection(controller).equals(new Vector2(0,0))) {
             controller.enemy.direction = EntityUtil.vectorToDirection(getDirection(controller));
         }
@@ -65,7 +84,7 @@ public class Moving implements State<PlaceholderController> {
 
     /**
      * Finds a valid path to the player and returns a vector in that direction
-     * @param controller The controller of this enemy
+     * @param controller The state controller of the entity
      */
     private Vector2 getDirection(PlaceholderController controller) {
         // Calculate the vector from enemy to player and the straight-line distance
@@ -85,7 +104,11 @@ public class Moving implements State<PlaceholderController> {
         if (path != null && path.size() > 1) {
             // When very close to player (within 1.5 tiles), activate flag to enter attack state
             if (directDistance < GamePanel.tileSize * 1.5f) {
-                canAttack = true;
+                float graceDuration = (System.nanoTime() - graceStartTime) / 1_000_000_000f;
+                // Check if the grace period for attacking has been met
+                if (graceDuration > attackGrace) {
+                    canAttack = true;
+                }
                 return new Vector2(0,0);
             }
             // When farther away, follow the calculated path
@@ -111,13 +134,19 @@ public class Moving implements State<PlaceholderController> {
         return new Vector2(0, 0);
     }
 
-
+    /**
+     * Gets the tile that the enemy is on
+     * @param controller The state controller of the entity
+     */
     private Tile getEnemyTile(PlaceholderController controller) {
         int col = (int) (controller.enemy.worldX / GamePanel.tileSize);
         int row = (int) (controller.enemy.worldY / GamePanel.tileSize);
         return tileM.mapTileNum[col][row];
     }
 
+    /**
+     * Gets the tile that the player is on
+     */
     private Tile getPlayerTile() {
         int col = (int) (gp.player.worldX / GamePanel.tileSize);
         int row = (int) (gp.player.worldY / GamePanel.tileSize);

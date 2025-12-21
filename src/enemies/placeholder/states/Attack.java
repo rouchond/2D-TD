@@ -60,26 +60,26 @@ public class Attack implements State<PlaceholderController> {
     public void updateState(PlaceholderController controller) {
         if (!isKnockback) {
             if (isAttacking) {
-                float attackDuration = (System.nanoTime() - attackStartTime) / 1_000_000_000f;
-                if (attackDuration > MAX_ATTACK_DURATION) {
-                    isAttacking = false;
-                } else {
-                    dashAttack(controller);
-                    physH.update();
+                dashAttack(controller);
                 }
-            } else {
+            else {
                 controller.changeState(controller.enemy.moving);
             }
         } else {
-            knockBack(controller);
+            controller.changeState(controller.enemy.knockback);
         }
     }
 
     @Override
     public void exitState(PlaceholderController controller) {
         controller.enemy.speed = controller.enemy.baseSpeed;
+        isKnockback = false;
     }
 
+    /**
+     * Gets the direction the player is relative to the enemy
+     * @param controller The state controller of the enemy
+     */
     private void getDirection(PlaceholderController controller) {
         float playerX = gp.player.worldX;
         float playerY = gp.player.worldY;
@@ -105,17 +105,26 @@ public class Attack implements State<PlaceholderController> {
         }
     }
 
+    /**
+     * When in range and in the attacking state, get a snapshot of the player position
+     * and move quickly in that direction for a short time, canceling the dash if the entity
+     * enters a collision
+     * @param controller The state controller of the enemy
+     */
     private void dashAttack(PlaceholderController controller) {
-        physH.setVelocity(dir);
-        physH.dash = true;
-        if (controller.enemy.tileCollisionOn) {
-            isKnockback = true;
-            physH.dash = false;
+        float attackDuration = (System.nanoTime() - attackStartTime) / 1_000_000_000f;
+        if (attackDuration > MAX_ATTACK_DURATION) {
             isAttacking = false;
+        } else {
+            physH.setVelocity(dir);
+            physH.dash = true;
+            physH.update();
+            if (controller.enemy.tileCollisionOn) {
+                isKnockback = true;
+                physH.dash = false;
+                isAttacking = false;
+            }
         }
     }
 
-    private void knockBack (PlaceholderController controller) {
-        System.out.println("Knockback");
-    }
 }

@@ -17,6 +17,9 @@ public class PhysicsHandler {
      */
     private final Vector2 defaultVelocity = new Vector2(0,0);
 
+    /**
+     * TEMPORARY: A check for using incremental collision checking
+     */
     public boolean dash;
 
     Entity entity;
@@ -57,7 +60,6 @@ public class PhysicsHandler {
             }
             else {
                 moveEntity();
-                entity.tileCollisionOn = false;
             }
         } else {
             resetVelocity();

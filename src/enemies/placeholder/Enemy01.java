@@ -1,6 +1,7 @@
 package enemies.placeholder;
 
 import enemies.placeholder.states.Attack;
+import enemies.placeholder.states.Knockback;
 import enemies.placeholder.states.Moving;
 import entity.Entity;
 import entity.EntityUtil;
@@ -33,6 +34,8 @@ public class Enemy01 extends Entity {
 
     public Attack attack;
 
+    public Knockback knockback;
+
     private final int startX;
 
     private final int startY;
@@ -52,6 +55,7 @@ public class Enemy01 extends Entity {
         this.eController = new PlaceholderController(gp, this);
         this.moving = new Moving(this.gp,this.physH, this.colH, this.tileM);
         this.attack = new Attack(this.gp, this.physH, this.colH);
+        this.knockback = new Knockback(this.gp, this.physH, this.colH, this.tileM);
 
         solidArea = new Rectangle(8, 16, 32, 32);
         solidAreaWorldX = solidArea.x;

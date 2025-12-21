@@ -17,6 +17,9 @@ public class Vector2 {
         this.y = y;
     }
 
+    /**
+     * Returns a normalized vector
+     */
     public Vector2 normalize () {
         float mag = (float) ((Math.sqrt(x * x + y * y)));
         if (mag != 0) {
@@ -27,6 +30,16 @@ public class Vector2 {
 
     }
 
+    /**
+     * Returns a vector pointing in the opposite direction
+     * @return
+     */
+    public Vector2 opposite () {return new Vector2(-x, -y);}
+
+    /**
+     * Returns true if the object passed is a vector with the same x & y component
+     * @param o The object we're comparing the vector to
+     */
     @Override
     public boolean equals (Object o) {
         if (o == this) {

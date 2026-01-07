@@ -2,10 +2,7 @@ package player;
 
 import entity.Entity;
 import entity.EntityUtil;
-import main.CollisionHandler;
-import main.GamePanel;
-import main.KeyHandler;
-import main.PhysicsHandler;
+import main.*;
 import player.states.Idle;
 import player.states.Moving;
 import tile.TileManager;
@@ -30,6 +27,7 @@ public class Player extends Entity {
 
     public GamePanel gp;
     KeyHandler keyH;
+    Camera camera;
     CollisionHandler colH;
     TileManager tileM;
     PhysicsHandler physH;
@@ -43,9 +41,10 @@ public class Player extends Entity {
      * @param gp GamePanel
      * @param keyH KeyHandler
      */
-    public Player(GamePanel gp, KeyHandler keyH, CollisionHandler colH, TileManager tileM){
+    public Player(GamePanel gp, KeyHandler keyH, Camera camera, CollisionHandler colH, TileManager tileM){
         this.gp = gp;
         this.keyH = keyH;
+        this.camera = camera;
         this.colH = colH;
         this.tileM = tileM;
         this.physH = new PhysicsHandler(this, gp, tileM);
@@ -101,7 +100,7 @@ public class Player extends Entity {
      * @param g2 2D graphics object from GamePanel
      */
     public void draw(Graphics2D g2) {
-        g2.drawImage(img, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+        g2.drawImage(img, camera.toScreenX(Math.round(worldX)), camera.toScreenY(Math.round(worldY)), GamePanel.tileSize, GamePanel.tileSize, null);
 
         //Debug Drawings
 //        g2.setColor(Color.red);

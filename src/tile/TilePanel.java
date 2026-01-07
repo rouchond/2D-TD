@@ -242,12 +242,12 @@ public class TilePanel extends JPanel implements Runnable{
     private void changeTile () {
         if (keyH.upArrowPressed && !keyH.previousUpArrowPressed) {
             if (tileIndex == tileE.tiles.get(tileSet).size() - 1) {
-                tileIndex = 1;
+                tileIndex = 0;
             } else {
                 tileIndex++;
             }
         } else if (keyH.downArrowPressed && !keyH.previousDownArrowPressed) {
-            if (tileIndex == 1) {
+            if (tileIndex == 0) {
                 tileIndex = tileE.tiles.get(tileSet).size() - 1;
             } else {
                 tileIndex--;

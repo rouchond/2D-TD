@@ -50,12 +50,12 @@ public class GamePanel extends JPanel implements Runnable{
     /**
      * The width of the world (unit is per tile)
      */
-    public final int maxWorldCol = 20;
+    public final int maxWorldCol = 100;
 
     /**
      * The height of the world (unit is per tile)
      */
-    public final int maxWorldRow = 20;
+    public final int maxWorldRow = 100;
 
     // Time
 
@@ -79,12 +79,13 @@ public class GamePanel extends JPanel implements Runnable{
 
     Thread gameThread;
     KeyHandler keyH = new KeyHandler();
-    TileManager tileM = new TileManager(this, keyH);
+    Camera camera = new Camera(screenWidth, screenHeight);
+    TileManager tileM = new TileManager(this, keyH, camera);
     CollisionHandler colH = new CollisionHandler(this);
 
     // Entities
-    public Player player = new Player(this, keyH, colH, tileM);
-    EnemyHandler enemyH = new EnemyHandler(this, colH, tileM);
+    public Player player = new Player(this, keyH, camera, colH, tileM);
+    EnemyHandler enemyH = new EnemyHandler(this, camera, colH, tileM);
 
     /**
      * An empty black game window that can listen for key inputs
@@ -116,6 +117,7 @@ public class GamePanel extends JPanel implements Runnable{
             towerLocation.update(player);
         }
         //enemyH.update();
+        camera.update(player);
         tileM.update();
         keyH.update();
     }

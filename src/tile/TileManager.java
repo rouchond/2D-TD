@@ -1,5 +1,6 @@
 package tile;
 
+import entity.pathfinding.Pathfinder;
 import main.Camera;
 import main.GamePanel;
 import main.KeyHandler;
@@ -19,6 +20,7 @@ public class TileManager {
     GamePanel gp;
     KeyHandler keyH;
     Camera camera;
+    Pathfinder pathfinder;
 
     /**
      * A hashmap of all the possible tiles
@@ -54,12 +56,13 @@ public class TileManager {
      * Creates the Tile Grid and loads each tile into the grid
      * @param gp
      */
-    public TileManager(GamePanel gp, KeyHandler keyH, Camera camera) {
+    public TileManager(GamePanel gp, KeyHandler keyH, Camera camera, Pathfinder pathfinder) {
         this.gp = gp;
         this.keyH = keyH;
         this.camera = camera;
+        this.pathfinder = pathfinder;
 
-        mapTileNum = new Tile[gp.maxWorldCol][gp.maxWorldRow];
+        mapTileNum = new Tile[gp.maxWorldRow][gp.maxWorldCol];
 
         TileLoader tileLoader = new TileLoader();
         tiles = tileLoader.Tiles;
@@ -112,14 +115,7 @@ public class TileManager {
                 }
             }
 
-            // Set the neighbors for each tile
-            for (Tile[] tileRow : mapTileNum) {
-                for (Tile tile : tileRow) {
-                    if (tile != null) {
-                        tile.setNeighbors(this);
-                    }
-                }
-            }
+            pathfinder.setupNodes(mapTileNum);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -149,15 +145,15 @@ public class TileManager {
      * @param g2
      */
     public void draw(Graphics2D g2) {
-        int worldCol = 0;
-        int worldRow = 0;
 
+        //Calculate Bounds for tiles in screen
         int startCol = max(0,(int) floor(camera.getX() / GamePanel.tileSize));
         int startRow = max(0, (int) floor(camera.getY() / GamePanel.tileSize));
 
         int endCol = min(mapTileNum[0].length, (int) ceil((camera.getX() + camera.screenWidth) / GamePanel.tileSize));
         int endRow = min(mapTileNum.length, (int) ceil((camera.getY() + camera.screenHeight) / GamePanel.tileSize));
 
+        //Draw every tile in screen
         for (int row = startRow; row <= endRow; row++){
             for (int col = startCol; col <= endCol; col++) {
                 Tile tile = mapTileNum[col][row];

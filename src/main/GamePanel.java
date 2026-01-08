@@ -1,6 +1,7 @@
 package main;
 
 import enemies.EnemyHandler;
+import entity.pathfinding.Pathfinder;
 import player.Player;
 import tile.TileManager;
 import tower.TowerPlacer;
@@ -80,7 +81,8 @@ public class GamePanel extends JPanel implements Runnable{
     Thread gameThread;
     KeyHandler keyH = new KeyHandler();
     Camera camera = new Camera(screenWidth, screenHeight);
-    TileManager tileM = new TileManager(this, keyH, camera);
+    Pathfinder pathfinder = new Pathfinder(maxWorldCol, maxWorldRow);
+    TileManager tileM = new TileManager(this, keyH, camera, pathfinder);
     CollisionHandler colH = new CollisionHandler(this);
 
     // Entities

@@ -5,6 +5,7 @@ import enemies.placeholder.states.Knockback;
 import enemies.placeholder.states.Moving;
 import entity.Entity;
 import entity.EntityUtil;
+import main.Camera;
 import main.CollisionHandler;
 import main.GamePanel;
 import main.PhysicsHandler;
@@ -19,6 +20,8 @@ import java.util.Objects;
 public class Enemy01 extends Entity {
 
     GamePanel gp;
+
+    Camera camera;
 
     TileManager tileM;
 
@@ -40,8 +43,9 @@ public class Enemy01 extends Entity {
 
     private final int startY;
 
-    public Enemy01 (GamePanel gp, CollisionHandler colH, TileManager tileM, int x, int y) {
+    public Enemy01 (GamePanel gp, Camera camera, CollisionHandler colH, TileManager tileM, int x, int y) {
         this.gp = gp;
+        this.camera = camera;
         this.colH = colH;
         this.tileM = tileM;
 
@@ -90,9 +94,6 @@ public class Enemy01 extends Entity {
     }
 
     public void draw (Graphics2D g2) {
-        int screenX = (int) (worldX -  player.worldX + player.screenX); //screenX is an offset accounting for the centering of the player
-        int screenY = (int) (worldY - player.worldY + player.screenY); //screenY is an offset accounting for the centering of the player
-
-        g2.drawImage(img, screenX, screenY, GamePanel.tileSize, GamePanel.tileSize, null);
+        g2.drawImage(img, camera.toScreenX(Math.round(worldX)), camera.toScreenY(Math.round(worldY)), GamePanel.tileSize, GamePanel.tileSize, null);
     }
 }

@@ -3,12 +3,9 @@ package enemies.placeholder.states;
 import Util.Vector2;
 import enemies.placeholder.PlaceholderController;
 import entity.EntityUtil;
-import entity.pathfinding.Pathfinding;
 import main.*;
 import tile.Tile;
 import tile.TileManager;
-
-import java.util.ArrayList;
 
 public class Moving implements State<PlaceholderController> {
 
@@ -87,51 +84,9 @@ public class Moving implements State<PlaceholderController> {
      * @param controller The state controller of the entity
      */
     private Vector2 getDirection(PlaceholderController controller) {
-        // Calculate the vector from enemy to player and the straight-line distance
-        float directDx = gp.player.worldX - controller.enemy.worldX;
-        float directDy = gp.player.worldY - controller.enemy.worldY;
-        float directDistance = (float) Math.sqrt(directDx * directDx + directDy * directDy);
+        // Pathfinding happens here
 
-        // Get the current tile positions of both enemy and player
-        Tile startTile = getEnemyTile(controller);
-        Tile targetTile = getPlayerTile();
-
-        // Calculate a path from enemy to player using A* pathfinding
-        Pathfinding pathfinder = new Pathfinding();
-        ArrayList<Tile> path = pathfinder.findPath(startTile, targetTile);
-
-        // If we found a valid path with at least two tiles (current and next)
-        if (path != null && path.size() > 1) {
-            // When very close to player (within 1.5 tiles), activate flag to enter attack state
-            if (directDistance < GamePanel.tileSize * 1.5f) {
-                float graceDuration = (System.nanoTime() - graceStartTime) / 1_000_000_000f;
-                // Check if the grace period for attacking has been met
-                if (graceDuration > attackGrace) {
-                    canAttack = true;
-                }
-                return new Vector2(0,0);
-            }
-            // When farther away, follow the calculated path
-            else {
-                Tile nextTile = path.get(1);  // Get the next tile in our path
-                // Convert tile coordinates to world coordinates, targeting tile center
-                float targetX = nextTile.tileCol * GamePanel.tileSize + (GamePanel.tileSize / 2f);
-                float targetY = nextTile.tileRow * GamePanel.tileSize + (GamePanel.tileSize / 2f);
-
-                // Calculate direction to next tile
-                float pathDx = targetX - controller.enemy.worldX;
-                float pathDy = targetY - controller.enemy.worldY;
-
-                // Return a normalized direction vector (-1, 0, or 1 for each component)
-                return new Vector2(
-                        pathDx > 0 ? 1 : pathDx < 0 ? -1 : 0,
-                        pathDy > 0 ? 1 : pathDy < 0 ? -1 : 0
-                );
-            }
-        }
-
-        // If we couldn't find a path or are already at the target, don't move
-        return new Vector2(0, 0);
+        return new Vector2(0,0);
     }
 
     /**

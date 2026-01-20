@@ -1,6 +1,7 @@
 package enemies;
 
 import enemies.placeholder.Enemy01;
+import entity.pathfinding.Pathfinder;
 import main.Camera;
 import main.CollisionHandler;
 import main.GamePanel;
@@ -16,18 +17,21 @@ public class EnemyHandler {
 
     Camera camera;
 
+    Pathfinder pathfinder;
+
     TileManager tileM;
 
     CollisionHandler colH;
 
     ArrayList<Enemy01> enemies = new ArrayList<>();
 
-    public EnemyHandler (GamePanel gp, Camera camera, CollisionHandler colH, TileManager tileM) {
+    public EnemyHandler (GamePanel gp, Camera camera, Pathfinder pathfinder, CollisionHandler colH, TileManager tileM) {
         this.gp = gp;
         this.camera = camera;
+        this.pathfinder = pathfinder;
         this.colH = colH;
         this.tileM = tileM;
-        enemies.add(new Enemy01(gp, camera, colH, tileM, 11, 4));
+        enemies.add(new Enemy01(gp, camera, pathfinder, colH, tileM, 11, 4));
         //enemies.add(new Enemy01(gp, colH, tileM, 8, 6));
     }
 

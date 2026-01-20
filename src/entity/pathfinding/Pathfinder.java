@@ -1,9 +1,9 @@
 package entity.pathfinding;
 
-import Util.Vector2;
 import tile.Tile;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Pathfinder {
 
@@ -37,7 +37,9 @@ public class Pathfinder {
     public void setupNodes(Tile[][] tileMap) {
         for (Tile[] tileRow : tileMap){
             for (Tile tile : tileRow) {
-                nodeGrid[tile.tileCol][tile.tileRow] = new PathfindingNode(tile.tileCol, tile.tileRow, tile.collision);
+                if (tile != null) {
+                    nodeGrid[tile.tileCol][tile.tileRow] = new PathfindingNode(tile.tileCol, tile.tileRow, tile.collision);
+                }
             }
         }
     }
@@ -48,7 +50,7 @@ public class Pathfinder {
      * @param startTile The tile the entity is on
      * @param targetTile The tile the entity is trying to get to
      */
-    private ArrayList<PathfindingNode> findPath (Tile startTile, Tile targetTile) {
+    public ArrayList<PathfindingNode> findPath (Tile startTile, Tile targetTile) {
         resetNodes();
 
         PathfindingNode target = nodeGrid[targetTile.tileRow][targetTile.tileCol];
@@ -97,8 +99,9 @@ public class Pathfinder {
                 if (i != 0 && j != 0) {
                     distanceToNeighbor = 1.41f;
 
-                    if (!nodeGrid[current.row][current.col + i].walkable
-                            || !nodeGrid[current.row + j][current.col].walkable) {
+                    if ((nodeGrid[current.row][current.col + i] == null || nodeGrid[current.row + j][current.col] == null )
+                            || (!nodeGrid[current.row][current.col + i].walkable
+                            || !nodeGrid[current.row + j][current.col].walkable)) {
                         continue;
                     }
                 }
@@ -111,7 +114,7 @@ public class Pathfinder {
 
                     PathfindingNode neighbor = nodeGrid[neighborRow][neighborCol];
 
-                    if ((!neighbor.walkable && neighbor.closed) ) {
+                    if ((neighbor == null || (!neighbor.walkable && neighbor.closed)) ) {
                         continue;
                     }
 
@@ -142,10 +145,12 @@ public class Pathfinder {
         closedList.clear();
         for (PathfindingNode[] nodeRow : nodeGrid) {
             for (PathfindingNode node: nodeRow) {
-                node.open = false;
-                node.gCost = 0;
-                node.hCost = 0;
-                node.parent = null;
+                if (node != null) {
+                    node.open = false;
+                    node.gCost = 0;
+                    node.hCost = 0;
+                    node.parent = null;
+                }
             }
         }
     }
@@ -177,7 +182,11 @@ public class Pathfinder {
             current = current.parent;
         }
 
-        return (ArrayList<PathfindingNode>) path.reversed();
+        List<PathfindingNode> newLi = path.reversed();
+
+        ArrayList<PathfindingNode> res = new ArrayList<>(newLi);
+
+        return res;
     }
 
 }

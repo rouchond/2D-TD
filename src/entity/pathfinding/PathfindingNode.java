@@ -32,7 +32,7 @@ public class PathfindingNode {
      */
     public boolean closed = false;
 
-    int col, row;
+    public int col, row;
 
     public PathfindingNode (int col, int row, boolean walkable) {
         this.col = col;

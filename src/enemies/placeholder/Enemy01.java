@@ -5,6 +5,7 @@ import enemies.placeholder.states.Knockback;
 import enemies.placeholder.states.Moving;
 import entity.Entity;
 import entity.EntityUtil;
+import entity.pathfinding.Pathfinder;
 import main.Camera;
 import main.CollisionHandler;
 import main.GamePanel;
@@ -22,6 +23,8 @@ public class Enemy01 extends Entity {
     GamePanel gp;
 
     Camera camera;
+
+    Pathfinder pathfinder;
 
     TileManager tileM;
 
@@ -43,9 +46,10 @@ public class Enemy01 extends Entity {
 
     private final int startY;
 
-    public Enemy01 (GamePanel gp, Camera camera, CollisionHandler colH, TileManager tileM, int x, int y) {
+    public Enemy01 (GamePanel gp, Camera camera, Pathfinder pathfinder, CollisionHandler colH, TileManager tileM, int x, int y) {
         this.gp = gp;
         this.camera = camera;
+        this.pathfinder = pathfinder;
         this.colH = colH;
         this.tileM = tileM;
 
@@ -57,7 +61,7 @@ public class Enemy01 extends Entity {
         this.physH = new PhysicsHandler(this, gp, tileM);
 
         this.eController = new PlaceholderController(gp, this);
-        this.moving = new Moving(this.gp,this.physH, this.colH, this.tileM);
+        this.moving = new Moving(this.gp, this.pathfinder, this.physH, this.colH, this.tileM);
         this.attack = new Attack(this.gp, this.physH, this.colH);
         this.knockback = new Knockback(this.gp, this.physH, this.colH, this.tileM);
 

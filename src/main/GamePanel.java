@@ -87,7 +87,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     // Entities
     public Player player = new Player(this, keyH, camera, colH, tileM);
-    EnemyHandler enemyH = new EnemyHandler(this, camera, colH, tileM);
+    EnemyHandler enemyH = new EnemyHandler(this, camera, pathfinder, colH, tileM);
 
     /**
      * An empty black game window that can listen for key inputs
@@ -118,7 +118,7 @@ public class GamePanel extends JPanel implements Runnable{
         for (TowerPlacer towerLocation : tileM.towerLocations) {
             towerLocation.update(player);
         }
-        //enemyH.update();
+        enemyH.update();
         camera.update(player);
         tileM.update();
         keyH.update();

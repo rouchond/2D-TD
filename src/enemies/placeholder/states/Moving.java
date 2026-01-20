@@ -3,9 +3,13 @@ package enemies.placeholder.states;
 import Util.Vector2;
 import enemies.placeholder.PlaceholderController;
 import entity.EntityUtil;
+import entity.pathfinding.Pathfinder;
+import entity.pathfinding.PathfindingNode;
 import main.*;
 import tile.Tile;
 import tile.TileManager;
+
+import java.util.ArrayList;
 
 public class Moving implements State<PlaceholderController> {
 
@@ -13,6 +17,7 @@ public class Moving implements State<PlaceholderController> {
     TileManager tileM;
     PhysicsHandler physH;
     CollisionHandler colH;
+    Pathfinder pathfinder;
 
     /**
      * A flag that determines if the enemy should transition to the attack state
@@ -30,8 +35,9 @@ public class Moving implements State<PlaceholderController> {
      */
     private long graceStartTime;
 
-    public Moving (GamePanel gp, PhysicsHandler physH, CollisionHandler colH, TileManager tileM) {
+    public Moving (GamePanel gp, Pathfinder pathfinder, PhysicsHandler physH, CollisionHandler colH, TileManager tileM) {
         this.gp = gp;
+        this.pathfinder = pathfinder;
         this.physH = physH;
         this.colH = colH;
         this.tileM = tileM;
@@ -70,13 +76,7 @@ public class Moving implements State<PlaceholderController> {
      * @param controller The state controller of the enemy
      */
     private void move (PlaceholderController controller) {
-        if (!getDirection(controller).equals(new Vector2(0,0))) {
-            controller.enemy.direction = EntityUtil.vectorToDirection(getDirection(controller));
-        }
-        Vector2 dir = getDirection(controller).normalize();
-        if (!canAttack) {
-            physH.setVelocity(dir);
-        }
+        // Enemy Movement
     }
 
     /**
@@ -84,9 +84,40 @@ public class Moving implements State<PlaceholderController> {
      * @param controller The state controller of the entity
      */
     private Vector2 getDirection(PlaceholderController controller) {
-        // Pathfinding happens here
+        ArrayList<PathfindingNode> path = pathfinder.findPath(getEnemyTile(controller), getPlayerTile());
+        PathfindingNode nextNode;
 
-        return new Vector2(0,0);
+        if (path == null || path.isEmpty()) {
+            return new Vector2(0,0);
+        }
+        else {
+            nextNode = path.getFirst();
+        }
+
+        // Center of next tile
+        float targetX = nextNode.col * GamePanel.tileSize + (GamePanel.tileSize / 2f);
+        float targetY = nextNode.row * GamePanel.tileSize + (GamePanel.tileSize / 2f);
+
+        // Distance & Direction
+        float diffX = targetX - controller.enemy.worldX;
+        float diffY = targetY - controller.enemy.worldY;
+        float distance = (float) Math.sqrt(diffX * diffX + diffY * diffY);
+
+
+        if (distance < controller.enemy.speed) {
+            path.remove(nextNode);
+            return new Vector2(0,0);
+        }
+        else {
+
+            //Needs work
+            float dirX = diffX / distance;
+            float dirY = diffY / distance;
+
+            return new Vector2(dirX, dirY);
+
+        }
+
     }
 
     /**

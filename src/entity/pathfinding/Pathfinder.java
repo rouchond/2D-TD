@@ -38,7 +38,7 @@ public class Pathfinder {
         for (Tile[] tileRow : tileMap){
             for (Tile tile : tileRow) {
                 if (tile != null) {
-                    nodeGrid[tile.tileCol][tile.tileRow] = new PathfindingNode(tile.tileCol, tile.tileRow, tile.collision);
+                    nodeGrid[tile.tileCol][tile.tileRow] = new PathfindingNode(tile.tileCol, tile.tileRow, !tile.collision);
                 }
             }
         }
@@ -60,7 +60,6 @@ public class Pathfinder {
         start.calculateH(target);
         start.open = true;
         openList.add(start);
-
 
 
         while (!openList.isEmpty()) {
@@ -114,6 +113,7 @@ public class Pathfinder {
 
                     PathfindingNode neighbor = nodeGrid[neighborRow][neighborCol];
 
+                    //Skip walls or tiles we've already checked
                     if ((neighbor == null || (!neighbor.walkable && neighbor.closed)) ) {
                         continue;
                     }
@@ -147,6 +147,7 @@ public class Pathfinder {
             for (PathfindingNode node: nodeRow) {
                 if (node != null) {
                     node.open = false;
+                    node.closed = false;
                     node.gCost = 0;
                     node.hCost = 0;
                     node.parent = null;
@@ -168,6 +169,7 @@ public class Pathfinder {
 
         minNode.open = false;
         openList.remove(minNode);
+        minNode.closed = true;
         return minNode;
     }
 
@@ -176,10 +178,13 @@ public class Pathfinder {
      */
     private ArrayList<PathfindingNode> backtrace (PathfindingNode current) {
         ArrayList<PathfindingNode> path = new ArrayList<>();
+        int maxTiles = maxWorldCol * maxWorldRow;
+        int currReset = 0;
 
-        while (current != null) {
+        while (current != null && currReset < maxTiles) {
             path.add(current);
             current = current.parent;
+            currReset++;
         }
 
         List<PathfindingNode> newLi = path.reversed();

@@ -31,8 +31,12 @@ public class Vector2 {
     }
 
     /**
+     * Calculates the length of a vector
+     */
+    public float length() {return (float) Math.sqrt(this.x * this.x + this.y * this.y);}
+
+    /**
      * Returns a vector pointing in the opposite direction
-     * @return
      */
     public Vector2 opposite () {return new Vector2(-x, -y);}
 

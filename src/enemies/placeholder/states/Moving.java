@@ -35,6 +35,16 @@ public class Moving implements State<PlaceholderController> {
      */
     private long graceStartTime;
 
+    /**
+     * The current path the enemy is taking
+     */
+    private ArrayList<PathfindingNode> currPath = new ArrayList<>();
+
+    /**
+     * The tile that enemy is tracking
+     */
+    private Tile currTarget;
+
     public Moving (GamePanel gp, Pathfinder pathfinder, PhysicsHandler physH, CollisionHandler colH, TileManager tileM) {
         this.gp = gp;
         this.pathfinder = pathfinder;
@@ -45,6 +55,7 @@ public class Moving implements State<PlaceholderController> {
     @Override
     public void enterState(PlaceholderController controller) {
         graceStartTime = System.nanoTime();
+        currTarget = getPlayerTile();
     }
 
     /**
@@ -77,6 +88,8 @@ public class Moving implements State<PlaceholderController> {
      */
     private void move (PlaceholderController controller) {
         // Enemy Movement
+        Vector2 moveDir = getDirection(controller);
+        System.out.println(moveDir);
     }
 
     /**
@@ -84,15 +97,18 @@ public class Moving implements State<PlaceholderController> {
      * @param controller The state controller of the entity
      */
     private Vector2 getDirection(PlaceholderController controller) {
-        ArrayList<PathfindingNode> path = pathfinder.findPath(getEnemyTile(controller), getPlayerTile());
-        PathfindingNode nextNode;
+        //Update the path if the player moved, or we don't have a path
+        if (currPath.isEmpty() || !currTarget.equals(getPlayerTile())) {
+            currPath = pathfinder.findPath(getEnemyTile(controller), getPlayerTile());
+            currTarget = getPlayerTile();
+        }
 
-        if (path == null || path.isEmpty()) {
+        //Enemy doesn't move if we don't have a path
+        if (currPath == null || currPath.isEmpty()) {
             return new Vector2(0,0);
         }
-        else {
-            nextNode = path.getFirst();
-        }
+
+        PathfindingNode nextNode = currPath.getFirst();
 
         // Center of next tile
         float targetX = nextNode.col * GamePanel.tileSize + (GamePanel.tileSize / 2f);
@@ -103,9 +119,9 @@ public class Moving implements State<PlaceholderController> {
         float diffY = targetY - controller.enemy.worldY;
         float distance = (float) Math.sqrt(diffX * diffX + diffY * diffY);
 
-
+        //If enemy is close to player, stop moving (change to attack state later)
         if (distance < controller.enemy.speed) {
-            path.remove(nextNode);
+            currPath.removeFirst();
             return new Vector2(0,0);
         }
         else {

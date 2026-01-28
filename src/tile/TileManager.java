@@ -48,7 +48,7 @@ public class TileManager {
     public ArrayList<TowerPlacer> removeTowerQueue = new ArrayList<>();
 
     /**
-     * The position of a tile in the tile array [col][row]
+     * The position of a tile in the tile array [row][col]
      */
     public Tile[][] mapTileNum;
 
@@ -74,7 +74,7 @@ public class TileManager {
             e.printStackTrace();
         }
 
-        loadMap("res/maps/world.txt");
+        loadMap("res/maps/world02.txt");
     }
 
     /**

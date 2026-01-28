@@ -66,8 +66,6 @@ public class Enemy01 extends Entity {
         this.knockback = new Knockback(this.gp, this.physH, this.colH, this.tileM);
 
         solidArea = new Rectangle(8, 16, 32, 32);
-        solidAreaWorldX = solidArea.x;
-        solidAreaWorldY = solidArea.y;
 
         eController.setupState(moving);
         getEnemyImage();
@@ -77,7 +75,7 @@ public class Enemy01 extends Entity {
     private void setDefaultValues() {
         worldX = GamePanel.tileSize * startX;
         worldY = GamePanel.tileSize * startY;
-        baseSpeed = 5;
+        baseSpeed = 1;
         speed = baseSpeed;
         health = 10;
         direction = EntityUtil.Direction.DOWN;

@@ -10,7 +10,7 @@ public class PhysicsHandler {
     /**
      * The current velocity of the entity
      */
-    public Vector2 velocity;
+    private Vector2 velocity;
 
     /**
      * The velocity of the entity without forces applied
@@ -75,5 +75,7 @@ public class PhysicsHandler {
         entity.worldX = newPos[0];
         entity.worldY = newPos[1];
     }
+
+    public Vector2 getVelocity() {return this.velocity;}
 
 }

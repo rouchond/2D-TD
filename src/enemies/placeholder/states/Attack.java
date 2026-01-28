@@ -58,16 +58,17 @@ public class Attack implements State<PlaceholderController> {
 
     @Override
     public void updateState(PlaceholderController controller) {
-        if (!isKnockback) {
-            if (isAttacking) {
-                dashAttack(controller);
-                }
-            else {
-                controller.changeState(controller.enemy.moving);
-            }
-        } else {
-            controller.changeState(controller.enemy.knockback);
-        }
+//        if (!isKnockback) {
+//            if (isAttacking) {
+//                dashAttack(controller);
+//                }
+//            else {
+//                controller.changeState(controller.enemy.moving);
+//            }
+//        } else {
+//            controller.changeState(controller.enemy.knockback);
+//        }
+        System.out.println("is attacking");
     }
 
     @Override

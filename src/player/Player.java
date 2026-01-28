@@ -57,8 +57,6 @@ public class Player extends Entity {
         screenY = gp.screenHeight/2 - (GamePanel.tileSize);
 
         solidArea = new Rectangle(8, 16, 32, 32);
-        solidAreaWorldX = solidArea.x;
-        solidAreaWorldY = solidArea.y;
 
         pController.setupState(idle);
         setDefaultValues();

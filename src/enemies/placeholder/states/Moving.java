@@ -45,6 +45,11 @@ public class Moving implements State<PlaceholderController> {
      */
     private Tile currTarget;
 
+    /**
+     * A counter for when to calculate a path again
+     */
+    private int frameCounter = 0;
+
     public Moving (GamePanel gp, Pathfinder pathfinder, PhysicsHandler physH, CollisionHandler colH, TileManager tileM) {
         this.gp = gp;
         this.pathfinder = pathfinder;
@@ -64,13 +69,16 @@ public class Moving implements State<PlaceholderController> {
      */
     @Override
     public void updateState(PlaceholderController controller) {
-        move(controller);
+
         if (canAttack) {
-            controller.changeState(controller.enemy.attack);
+            System.out.println("ready to attack");
+            physH.setVelocity(new Vector2(0,0));
+            //controller.changeState(controller.enemy.attack);
         }
         else {
-            physH.update();
+            move(controller);
         }
+        physH.update();
     }
 
     /**
@@ -87,9 +95,8 @@ public class Moving implements State<PlaceholderController> {
      * @param controller The state controller of the enemy
      */
     private void move (PlaceholderController controller) {
-        // Enemy Movement
-        Vector2 moveDir = getDirection(controller);
-        System.out.println(moveDir);
+        physH.setVelocity(getDirection(controller).scale(controller.enemy.speed));
+        //System.out.println("Velocity: " + physH.getVelocity().x + ", " + physH.getVelocity().y);
     }
 
     /**
@@ -97,11 +104,61 @@ public class Moving implements State<PlaceholderController> {
      * @param controller The state controller of the entity
      */
     private Vector2 getDirection(PlaceholderController controller) {
-        //Update the path if the player moved, or we don't have a path
-        if (currPath.isEmpty() || !currTarget.equals(getPlayerTile())) {
+        frameCounter++;
+
+        // Enemy Center
+        float enemyX = controller.enemy.worldX + controller.enemy.solidArea.x + (controller.enemy.solidArea.width / 2f);
+        float enemyY = controller.enemy.worldY + controller.enemy.solidArea.y + (controller.enemy.solidArea.height / 2f);
+
+        // Player Center
+        float playerX = gp.player.worldX + gp.player.solidArea.x + (gp.player.solidArea.width / 2f);
+        float playerY = gp.player.worldY + gp.player.solidArea.y + (gp.player.solidArea.height / 2f);
+
+        // Distance & Direction of player tile
+        float pDiffX = playerX - enemyX;
+        float pDiffY = playerY - enemyY;
+
+        Vector2 pDir = new Vector2(pDiffX, pDiffY);
+        float pDistance = pDir.length();
+
+        int distToTarget = Math.abs(currTarget.tileCol - getPlayerTile().tileCol) +
+                Math.abs(currTarget.tileRow - getPlayerTile().tileRow);
+
+        //Update the path if the player moved out of the current tile, or we don't have a path
+        if (currPath.isEmpty() || distToTarget > 1 || frameCounter >= 20) {
             currPath = pathfinder.findPath(getEnemyTile(controller), getPlayerTile());
             currTarget = getPlayerTile();
+            frameCounter = 0;
+
+            //Check if we should skip the first node if we're practically on it
+            if (currPath.size() > 1) {
+                float distToFirst = getDistanceToNode(controller, currPath.get(0));
+                float distToSecond = getDistanceToNode(controller, currPath.get(1));
+
+                // If the second node is actually more convenient, skip the first
+                if (distToFirst < GamePanel.tileSize * 0.8f || distToSecond < distToFirst) {
+                    currPath.removeFirst();
+                }
+            }
         }
+
+        //If enemy is close to player, change to direct follow
+        float attackRange = GamePanel.tileSize * 1.5f;
+        float directTargetDist = GamePanel.tileSize * 4.0f;
+        if (pDistance < directTargetDist) {
+
+            // Stop if in range
+            if (pDistance <= attackRange) {
+                this.canAttack = true;
+                return new Vector2(0, 0);
+            }
+
+            // Walk straight to player
+            this.canAttack = false;
+            return pDir.normalize();
+        }
+
+        // A* logic if enemy is far away
 
         //Enemy doesn't move if we don't have a path
         if (currPath == null || currPath.isEmpty()) {
@@ -110,30 +167,54 @@ public class Moving implements State<PlaceholderController> {
 
         PathfindingNode nextNode = currPath.getFirst();
 
-        // Center of next tile
-        float targetX = nextNode.col * GamePanel.tileSize + (GamePanel.tileSize / 2f);
-        float targetY = nextNode.row * GamePanel.tileSize + (GamePanel.tileSize / 2f);
+        // Center of next tile in path
+        float targetX = (nextNode.col * GamePanel.tileSize) + (GamePanel.tileSize / 2f);
+        float targetY = (nextNode.row * GamePanel.tileSize) + (GamePanel.tileSize / 2f);
 
-        // Distance & Direction
-        float diffX = targetX - controller.enemy.worldX;
-        float diffY = targetY - controller.enemy.worldY;
-        float distance = (float) Math.sqrt(diffX * diffX + diffY * diffY);
+        // Distance & Direction of next tile
+        float diffX = targetX - enemyX;
+        float diffY = targetY - enemyY;
 
-        //If enemy is close to player, stop moving (change to attack state later)
+        Vector2 dir = new Vector2(diffX, diffY);
+        float distance = dir.length();
+
+        // Follow path if enemy is further away
         if (distance < controller.enemy.speed) {
             currPath.removeFirst();
-            return new Vector2(0,0);
+            if (currPath.isEmpty()) {
+                return new Vector2(0,0);
+            }
+            else {
+                //Recalculate target for next tile
+                nextNode = currPath.getFirst();
+                targetX = (nextNode.col * GamePanel.tileSize) + (GamePanel.tileSize / 2f);
+                targetY = (nextNode.row * GamePanel.tileSize) + (GamePanel.tileSize / 2f);
+                dir = new Vector2(targetX - enemyX, targetY - enemyY);
+            }
         }
-        else {
 
-            //Needs work
-            float dirX = diffX / distance;
-            float dirY = diffY / distance;
+        this.canAttack = false;
+        return dir.normalize();
 
-            return new Vector2(dirX, dirY);
+    }
 
-        }
+    /**
+     * Returns the distance between the enemy and the given node
+     * @param controller The state controller of the entity
+     * @param node The node the method is calculating distance for
+     */
+    private float getDistanceToNode(PlaceholderController controller, PathfindingNode node) {
+        // Center of enemy entity
+        float enemyCenterX = controller.enemy.worldX + controller.enemy.solidArea.x + (controller.enemy.solidArea.width / 2f);
+        float enemyCenterY = controller.enemy.worldY + controller.enemy.solidArea.y + (controller.enemy.solidArea.height / 2f);
 
+        // Center of node tile
+        float nodeCenterX = (node.col * GamePanel.tileSize) + (GamePanel.tileSize / 2f);
+        float nodeCenterY = (node.row * GamePanel.tileSize) + (GamePanel.tileSize / 2f);
+
+        // Calculate distance
+        Vector2 vec = new Vector2(nodeCenterX - enemyCenterX, nodeCenterY - enemyCenterY);
+        return vec.length();
     }
 
     /**
@@ -143,7 +224,7 @@ public class Moving implements State<PlaceholderController> {
     private Tile getEnemyTile(PlaceholderController controller) {
         int col = (int) (controller.enemy.worldX / GamePanel.tileSize);
         int row = (int) (controller.enemy.worldY / GamePanel.tileSize);
-        return tileM.mapTileNum[col][row];
+        return tileM.mapTileNum[row][col];
     }
 
     /**
@@ -152,6 +233,6 @@ public class Moving implements State<PlaceholderController> {
     private Tile getPlayerTile() {
         int col = (int) (gp.player.worldX / GamePanel.tileSize);
         int row = (int) (gp.player.worldY / GamePanel.tileSize);
-        return tileM.mapTileNum[col][row];
+        return tileM.mapTileNum[row][col];
     }
 }

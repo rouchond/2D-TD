@@ -95,7 +95,7 @@ public class TileEditor {
      * Saves the current state of the TileEditor as a map
      */
     public void saveMap() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("res/maps/generatedMap.txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("res/maps/world02.txt"))) {
 
             // Go through entire map
             int worldCol = 0;

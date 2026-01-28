@@ -39,4 +39,15 @@ public class Tile {
      * The 8 tiles surrounding the tile
      */
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {return true;}
+        else if (!(o instanceof Tile tile)) {
+            return false;
+        }
+        else {
+            return tileCol == tile.tileCol && tileRow == tile.tileRow;
+        }
+    }
 }

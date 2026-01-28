@@ -23,13 +23,10 @@ public class Entity {
     public float baseSpeed;
     public EntityUtil.Direction direction;
     /**
-     * Area that represents the collision box relative to the screen
+     * Area that represents the collision box (centered on the entity)
      */
     public Rectangle solidArea;
-    /**
-     * Area of collision box relative to the world
-     */
-    public double solidAreaWorldX, solidAreaWorldY;
+
     /**
      * State of the tile collision for the entity
      */

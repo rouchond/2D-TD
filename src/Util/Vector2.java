@@ -36,6 +36,12 @@ public class Vector2 {
     public float length() {return (float) Math.sqrt(this.x * this.x + this.y * this.y);}
 
     /**
+     * Multiplies the vector by a scalar
+     * @param scalar The scalar each component is being scaled by
+     */
+    public Vector2 scale(float scalar) {return new Vector2(this.x * scalar, this.y * scalar);}
+
+    /**
      * Returns a vector pointing in the opposite direction
      */
     public Vector2 opposite () {return new Vector2(-x, -y);}

@@ -29,7 +29,7 @@ public class TowerPlacer extends Tile {
     KeyHandler keyH;
     TileManager tileM;
 
-    public TowerPlacer (int col, int row, KeyHandler keyH, TileManager tileM) {
+    public TowerPlacer (int row, int col, KeyHandler keyH, TileManager tileM) {
         solidArea = new Circle(
                 (col * GamePanel.tileSize),
                 row * GamePanel.tileSize,

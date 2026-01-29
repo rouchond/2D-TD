@@ -74,11 +74,12 @@ public class TileManager {
             e.printStackTrace();
         }
 
-        loadMap("res/maps/world02.txt");
+        loadMap("res/maps/world.txt");
     }
 
     /**
      * Loads a tile map from a text file
+     * Any empty space will be an air tile
      * @param mapPath The filepath of the map being loaded
      */
     private void loadMap(String mapPath) {
@@ -93,8 +94,8 @@ public class TileManager {
                     TowerPlacer tile = new TowerPlacer(Integer.parseInt(values[2]), Integer.parseInt(values[3]), keyH, this);
                     tile.tileSet = values[0];
                     tile.tileIndex = Integer.parseInt(values[1]);
-                    tile.tileCol = Integer.parseInt(values[2]);
-                    tile.tileRow = Integer.parseInt(values[3]);
+                    tile.tileRow = Integer.parseInt(values[2]);
+                    tile.tileCol = Integer.parseInt(values[3]);
 
                     tile.image = tiles.get(tile.tileSet).get(tile.tileIndex).image;
                     tile.collision = tiles.get(tile.tileSet).get(tile.tileIndex).collision;
@@ -105,8 +106,8 @@ public class TileManager {
                     Tile tile = new Tile();
                     tile.tileSet = values[0];
                     tile.tileIndex = Integer.parseInt(values[1]);
-                    tile.tileCol = Integer.parseInt(values[2]);
-                    tile.tileRow = Integer.parseInt(values[3]);
+                    tile.tileRow = Integer.parseInt(values[2]);
+                    tile.tileCol = Integer.parseInt(values[3]);
 
                     tile.image = tiles.get(tile.tileSet).get(tile.tileIndex).image;
                     tile.collision = tiles.get(tile.tileSet).get(tile.tileIndex).collision;
@@ -120,6 +121,12 @@ public class TileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+//        for (int row = 0;  row <= gp.maxWorldRow; row++){
+//            for (int col = 0; col <= gp.maxWorldCol; col++) {
+//                Tile tile = mapTileNum[row][col]
+//            }
+//        }
 
     }
 
@@ -156,7 +163,7 @@ public class TileManager {
         //Draw every tile in screen
         for (int row = startRow; row <= endRow; row++){
             for (int col = startCol; col <= endCol; col++) {
-                Tile tile = mapTileNum[col][row];
+                Tile tile = mapTileNum[row][col];
                 if (tile != null) {
                     int worldX = col * GamePanel.tileSize;
                     int worldY = row * GamePanel.tileSize;

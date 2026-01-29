@@ -20,7 +20,7 @@ public class TilePanel extends JPanel implements Runnable{
     final int scale = 3;
 
     /**
-     *Size of the tile after applying scaling
+     * Size of the tile after applying scaling
      */
     public final int tileSize = originalTileSize * scale;
 
@@ -30,7 +30,7 @@ public class TilePanel extends JPanel implements Runnable{
     public final int maxScreenCol = 16;
 
     /**
-     * Width of the screen (unit is per tile)
+     * Height of the screen (unit is per tile)
      */
     public final int maxScreenRow = 12;
 
@@ -49,12 +49,12 @@ public class TilePanel extends JPanel implements Runnable{
     /**
      * The width of the world (unit is per tile)
      */
-    public final int maxWorldCol = 20;
+    public final int maxWorldCol = 100;
 
     /**
      * The height of the world (unit is per tile)
      */
-    public final int maxWorldRow = 20;
+    public final int maxWorldRow = 100;
 
     /**
      * FPS cap of the game
@@ -105,7 +105,7 @@ public class TilePanel extends JPanel implements Runnable{
     public int currentTileCol = 0;
 
     /**
-     * Current column the mouse is in relative to the tile grid
+     * Current row the mouse is in relative to the tile grid
      */
     public int currentTileRow = 0;
 
@@ -185,9 +185,9 @@ public class TilePanel extends JPanel implements Runnable{
                 tile.tileIndex = tileIndex;
                 tile.tileSet = tileSet;
                 tile.image = tileE.tiles.get(tileSet).get(tileIndex).image;
-                tileE.mapTileNum[currentTileCol][currentTileRow] = tile;
+                tileE.mapTileNum[currentTileRow][currentTileCol] = tile;
             } else {
-                tileE.mapTileNum[currentTileCol][currentTileRow] = null;
+                tileE.mapTileNum[currentTileRow][currentTileCol] = null;
             }
         }
 
@@ -210,8 +210,8 @@ public class TilePanel extends JPanel implements Runnable{
 
         // Convert to tile coordinates using your previous method
         int[] tilePos = getMouseTilePosition(mousePoint.x, mousePoint.y);
-        currentTileCol = tilePos[0];
-        currentTileRow = tilePos[1];
+        currentTileRow = tilePos[0];
+        currentTileCol = tilePos[1];
     }
 
     /**
@@ -226,14 +226,16 @@ public class TilePanel extends JPanel implements Runnable{
         int worldY = mouseY + yPos;
 
         // Convert to tile coordinates
-        int tileCol = worldX / tileSize;
         int tileRow = worldY / tileSize;
+        int tileCol = worldX / tileSize;
+
 
         // Ensure we stay within bounds
-        tileCol = Math.max(0, Math.min(tileCol, maxWorldCol - 1));
         tileRow = Math.max(0, Math.min(tileRow, maxWorldRow - 1));
+        tileCol = Math.max(0, Math.min(tileCol, maxWorldCol - 1));
 
-        return new int[]{tileCol, tileRow};
+
+        return new int[]{tileRow, tileCol};
     }
 
     /**
@@ -315,7 +317,7 @@ public class TilePanel extends JPanel implements Runnable{
         // Tile Editor
         tileE.drawPlaced(g2);
         if (tileIndex != 0) {
-            tileE.drawMouse(g2, tileE.tiles.get(tileSet).get(tileIndex).image, currentTileCol, currentTileRow);
+            tileE.drawMouse(g2, tileE.tiles.get(tileSet).get(tileIndex).image, currentTileRow, currentTileCol);
         }
 
     }

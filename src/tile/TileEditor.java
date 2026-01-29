@@ -26,7 +26,7 @@ public class TileEditor {
 
     public TileEditor(TilePanel tp) {
         this.tp = tp;
-        mapTileNum = new Tile[tp.maxWorldCol][tp.maxWorldRow];
+        mapTileNum = new Tile[tp.maxWorldRow][tp.maxWorldCol];
         TileLoader tileLoader = new TileLoader();
         tiles = tileLoader.Tiles;
     }
@@ -42,16 +42,16 @@ public class TileEditor {
         int worldCol = 0;
         int worldRow = 0;
 
-        while (worldCol < tp.maxWorldCol && worldRow < tp.maxWorldRow) {
-            if (mapTileNum[worldCol][worldRow] != null) {
-                String tileSet = mapTileNum[worldCol][worldRow].tileSet;
-                int tileNum = mapTileNum[worldCol][worldRow].tileIndex;
+        while (worldRow < tp.maxWorldRow && worldCol < tp.maxWorldCol) {
+            if (mapTileNum[worldRow][worldCol] != null) {
+                String tileSet = mapTileNum[worldRow][worldCol].tileSet;
+                int tileNum = mapTileNum[worldRow][worldCol].tileIndex;
 
                 // Convert world position to screen position, accounting for camera
                 int worldX = worldCol * tp.tileSize;
                 int worldY = worldRow * tp.tileSize;
-                int screenX = worldX - (int) tp.xPos;  // Subtract camera position
-                int screenY = worldY - (int) tp.yPos;  // Subtract camera position
+                int screenX = worldX - tp.xPos;  // Subtract camera position
+                int screenY = worldY - tp.yPos;  // Subtract camera position
 
                 // Draw tile if in bounds of screen
                 if (screenX + tp.tileSize > 0 &&
@@ -79,12 +79,12 @@ public class TileEditor {
      * @param tileCol Current Column the mouse is in
      * @param tileRow Current Row the mouse is in
      */
-    public void drawMouse(Graphics2D g2, BufferedImage tileImg, int tileCol, int tileRow) {
+    public void drawMouse(Graphics2D g2, BufferedImage tileImg, int tileRow, int tileCol) {
         BufferedImage img = SpriteUtils.setImageOpacity(tileImg, 0.5f);
 
         // Convert world position to screen position by subtracting camera position
-        int screenX = (tileCol * tp.tileSize) - (int)tp.xPos;
-        int screenY = (tileRow * tp.tileSize) - (int)tp.yPos;
+        int screenX = (tileCol * tp.tileSize) - tp.xPos;
+        int screenY = (tileRow * tp.tileSize) - tp.yPos;
 
         g2.drawImage(img, screenX, screenY, tp.tileSize, tp.tileSize, null);
     }
@@ -95,30 +95,17 @@ public class TileEditor {
      * Saves the current state of the TileEditor as a map
      */
     public void saveMap() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("res/maps/world02.txt"))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("res/maps/world.txt"))) {
+            for (int worldRow = 0; worldRow < tp.maxWorldRow; worldRow++) {
+                for (int worldCol = 0; worldCol < tp.maxWorldCol; worldCol++) {
+                    if (mapTileNum[worldRow][worldCol] != null) {
+                        String tileSet = mapTileNum[worldRow][worldCol].tileSet;
+                        int tileNum = mapTileNum[worldRow][worldCol].tileIndex;
 
-            // Go through entire map
-            int worldCol = 0;
-            int worldRow = 0;
-
-            while (worldCol < tp.maxWorldCol && worldRow < tp.maxWorldRow) {
-
-                // Save tile if it's not null
-                if (mapTileNum[worldCol][worldRow] != null) {
-                    String tileSet = mapTileNum[worldCol][worldRow].tileSet;
-                    int tileNum = mapTileNum[worldCol][worldRow].tileIndex;
-
-                    String line = tileSet + "," + tileNum + "," + worldCol + "," + worldRow;
-                    writer.write(line);
-                    writer.newLine();
+                        String line = tileSet + "," + tileNum + "," + worldRow + "," + worldCol;
+                        writer.write(line);
+                        writer.newLine();
                     }
-
-
-                worldCol++;
-
-                if (worldCol == tp.maxWorldCol) {
-                    worldCol = 0;
-                    worldRow++;
                 }
             }
 

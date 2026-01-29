@@ -61,9 +61,9 @@ public class Enemy01 extends Entity {
         this.physH = new PhysicsHandler(this, gp, tileM);
 
         this.eController = new PlaceholderController(gp, this);
-        this.moving = new Moving(this.gp, this.pathfinder, this.physH, this.colH, this.tileM);
-        this.attack = new Attack(this.gp, this.physH, this.colH);
-        this.knockback = new Knockback(this.gp, this.physH, this.colH, this.tileM);
+        this.moving = new Moving(this.gp, this.camera, this.pathfinder, this.physH, this.colH, this.tileM);
+        this.attack = new Attack(this.gp, this.camera, this.physH, this.colH);
+        this.knockback = new Knockback(this.gp, this.camera, this.physH, this.colH, this.tileM);
 
         solidArea = new Rectangle(8, 16, 32, 32);
 
@@ -95,7 +95,26 @@ public class Enemy01 extends Entity {
         eController.update();
     }
 
+    /**
+     * Activates debug drawings if debugMode active
+     * @param g2 Graphics Object
+     */
+    private void debugDrawings(Graphics2D g2) {
+        if (gp.debugMode) {
+            moving.drawPath(g2);
+
+            float enemyCenterX = worldX + solidArea.x + (solidArea.width / 2f);
+            float enemyCenterY = worldY + solidArea.y + (solidArea.height / 2f);
+
+            float targetX = gp.player.worldX + gp.player.solidArea.x + (gp.player.solidArea.width / 2f);
+            float targetY = gp.player.worldY + gp.player.solidArea.y + (gp.player.solidArea.height / 2f);
+
+            moving.drawTargetLine(g2, enemyCenterX, enemyCenterY, targetX, targetY);
+        }
+    }
+
     public void draw (Graphics2D g2) {
         g2.drawImage(img, camera.toScreenX(Math.round(worldX)), camera.toScreenY(Math.round(worldY)), GamePanel.tileSize, GamePanel.tileSize, null);
+        debugDrawings(g2);
     }
 }

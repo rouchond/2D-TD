@@ -14,17 +14,6 @@ import java.util.Objects;
 
 public class Player extends Entity {
 
-    /**
-     * X pos of the screen
-     */
-    public final int screenX;
-
-    /**
-     * Y pos of the screen
-     */
-    public final int screenY;
-
-
     public GamePanel gp;
     KeyHandler keyH;
     Camera camera;
@@ -52,9 +41,6 @@ public class Player extends Entity {
 
         this.idle = new Idle(this.keyH, physH);
         this.moving = new Moving(this.keyH, this.physH, this.colH);
-
-        screenX = gp.screenWidth/2 - (GamePanel.tileSize);
-        screenY = gp.screenHeight/2 - (GamePanel.tileSize);
 
         solidArea = new Rectangle(8, 16, 32, 32);
 
@@ -94,14 +80,25 @@ public class Player extends Entity {
     }
 
     /**
+     * Activates debug drawings if debugMode active
+     * @param g2 Graphics Object
+     */
+    private void debugDrawings(Graphics2D g2) {
+        if (gp.debugMode) {
+            int screenX = camera.toScreenX((int) worldX + solidArea.x);
+            int screenY = camera.toScreenY((int) worldY + solidArea.y);
+
+            g2.setColor(Color.red);
+            g2.drawRect(screenX, screenY, solidArea.width, solidArea.height);
+        }
+    }
+
+    /**
      * Draw the player with camera offset
      * @param g2 2D graphics object from GamePanel
      */
     public void draw(Graphics2D g2) {
         g2.drawImage(img, camera.toScreenX(Math.round(worldX)), camera.toScreenY(Math.round(worldY)), GamePanel.tileSize, GamePanel.tileSize, null);
-
-        //Debug Drawings
-//        g2.setColor(Color.red);
-//        g2.drawRect(solidArea.x + screenX, solidArea.y + screenY, solidArea.width, solidArea.height);
+        debugDrawings(g2);
     }
 }

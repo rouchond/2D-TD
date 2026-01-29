@@ -3,10 +3,7 @@ package enemies.placeholder.states;
 import Util.Vector2;
 import enemies.placeholder.PlaceholderController;
 import entity.EntityUtil;
-import main.CollisionHandler;
-import main.GamePanel;
-import main.PhysicsHandler;
-import main.State;
+import main.*;
 import tile.TileManager;
 
 
@@ -25,12 +22,14 @@ public class Knockback implements State<PlaceholderController> {
     private Vector2 dir;
 
     GamePanel gp;
+    Camera camera;
     PhysicsHandler physH;
     CollisionHandler colH;
     TileManager tileM;
 
-    public Knockback (GamePanel gp, PhysicsHandler physH, CollisionHandler colH, TileManager tileM) {
+    public Knockback (GamePanel gp, Camera camera, PhysicsHandler physH, CollisionHandler colH, TileManager tileM) {
         this.gp = gp;
+        this.camera = camera;
         this.physH = physH;
         this.colH = colH;
         this.tileM = tileM;

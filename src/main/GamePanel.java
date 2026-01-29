@@ -76,6 +76,11 @@ public class GamePanel extends JPanel implements Runnable{
      */
     public float deltaTime;
 
+    /**
+     * A flag for drawing debug images
+     */
+    public boolean debugMode = false;
+
     // System
 
     Thread gameThread;
@@ -114,6 +119,7 @@ public class GamePanel extends JPanel implements Runnable{
      * Update the state of the game based on FPS
      */
     public void update () {
+        updateDebug();
         player.update();
         for (TowerPlacer towerLocation : tileM.towerLocations) {
             towerLocation.update(player);
@@ -174,5 +180,11 @@ public class GamePanel extends JPanel implements Runnable{
 
         // Player
         player.draw(g2);
+    }
+
+    private void updateDebug() {
+        if (keyH.gravePressed && !keyH.previousGravePressed) {
+            debugMode = !debugMode;
+        }
     }
 }

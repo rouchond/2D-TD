@@ -116,17 +116,27 @@ public class TileManager {
                 }
             }
 
-            pathfinder.setupNodes(mapTileNum);
+
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-//        for (int row = 0;  row <= gp.maxWorldRow; row++){
-//            for (int col = 0; col <= gp.maxWorldCol; col++) {
-//                Tile tile = mapTileNum[row][col]
-//            }
-//        }
+        //Fills null tiles with air tiles
+        for (int row = 0;  row < gp.maxWorldRow; row++){
+            for (int col = 0; col < gp.maxWorldCol; col++) {
+                if (mapTileNum[row][col] == null) {
+                    Tile tile = new Tile();
+                    tile.tileRow = row;
+                    tile.tileCol = col;
+                    tile.collision = true;
+                    mapTileNum[row][col] = tile;
+
+                }
+            }
+        }
+
+        pathfinder.setupNodes(mapTileNum);
 
     }
 

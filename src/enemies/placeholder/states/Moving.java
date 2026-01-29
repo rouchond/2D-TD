@@ -9,11 +9,13 @@ import main.*;
 import tile.Tile;
 import tile.TileManager;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Moving implements State<PlaceholderController> {
 
     GamePanel gp;
+    Camera camera;
     TileManager tileM;
     PhysicsHandler physH;
     CollisionHandler colH;
@@ -50,8 +52,9 @@ public class Moving implements State<PlaceholderController> {
      */
     private int frameCounter = 0;
 
-    public Moving (GamePanel gp, Pathfinder pathfinder, PhysicsHandler physH, CollisionHandler colH, TileManager tileM) {
+    public Moving (GamePanel gp, Camera camera, Pathfinder pathfinder, PhysicsHandler physH, CollisionHandler colH, TileManager tileM) {
         this.gp = gp;
+        this.camera = camera;
         this.pathfinder = pathfinder;
         this.physH = physH;
         this.colH = colH;
@@ -234,5 +237,59 @@ public class Moving implements State<PlaceholderController> {
         int col = (int) (gp.player.worldX / GamePanel.tileSize);
         int row = (int) (gp.player.worldY / GamePanel.tileSize);
         return tileM.mapTileNum[row][col];
+    }
+
+    /**
+     * Debug drawing to show the tiles the enemy is taking to the target
+     * @param g2 Graphics object for drawing
+     */
+    public void drawPath(Graphics2D g2) {
+        if (currPath != null && !currPath.isEmpty()) {
+            // Use a semi-transparent color so it doesn't hide the map
+            g2.setColor(new Color(0, 255, 255, 70)); // Cyan
+
+            for (PathfindingNode node : currPath) {
+                // Convert node coordinates to World Space
+                int worldX = node.col * GamePanel.tileSize;
+                int worldY = node.row * GamePanel.tileSize;
+
+                // Convert World Space to Screen Space via Camera
+                int screenX = camera.toScreenX(worldX);
+                int screenY = camera.toScreenY(worldY);
+
+                // Fill the tile
+                g2.fillRect(screenX, screenY, GamePanel.tileSize, GamePanel.tileSize);
+
+                // Optional: Draw an outline to make individual tiles clearer
+                g2.setColor(new Color(0, 255, 255, 150));
+                g2.drawRect(screenX, screenY, GamePanel.tileSize, GamePanel.tileSize);
+            }
+        }
+    }
+
+    /**
+     * Debug drawing to show the path the enemy is taking to the player
+     * @param g2 Graphics object used in drawings
+     * @param enemyX enemy's X pos
+     * @param enemyY enemy's Y pos
+     * @param targetX target's X pos
+     * @param targetY target's Y pos
+     */
+    public void drawTargetLine(Graphics2D g2, float enemyX, float enemyY, float targetX, float targetY) {
+        g2.setColor(Color.YELLOW);
+
+        // Enemy Center on screen
+        int startX = camera.toScreenX((int)enemyX);
+        int startY = camera.toScreenY((int)enemyY);
+
+        // Current Target on screen (could be a tile center or the player)
+        int endX = camera.toScreenX((int)targetX);
+        int endY = camera.toScreenY((int)targetY);
+
+        // Draw the line of intent
+        g2.drawLine(startX, startY, endX, endY);
+
+        // Draw a small circle at the exact target coordinate
+        g2.fillOval(endX - 4, endY - 4, 8, 8);
     }
 }

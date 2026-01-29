@@ -34,9 +34,9 @@ public class PathfindingNode {
 
     public int col, row;
 
-    public PathfindingNode (int col, int row, boolean walkable) {
-        this.col = col;
+    public PathfindingNode (int row, int col, boolean walkable) {
         this.row = row;
+        this.col = col;
         this.walkable = walkable;
     }
 

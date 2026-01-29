@@ -13,6 +13,8 @@ public class KeyHandler implements KeyListener, MouseListener {
     public boolean ePressed, previousEPressed;
     public boolean mPressed, previousMPressed;
 
+    public boolean gravePressed, previousGravePressed;
+
     @Override
     public void keyTyped(KeyEvent e) {
         // Will not implement
@@ -62,6 +64,11 @@ public class KeyHandler implements KeyListener, MouseListener {
             keyDown = true;
         }
 
+        if (code == 192) {
+            gravePressed = true;
+            keyDown = true;
+        }
+
     }
 
     @Override
@@ -104,7 +111,11 @@ public class KeyHandler implements KeyListener, MouseListener {
             mPressed = false;
         }
 
-        if (!rightPressed && !leftPressed && !downPressed && !upPressed && !upArrowPressed && !downArrowPressed && !ePressed && !mPressed) {
+        if (code == KeyEvent.VK_BACK_QUOTE) {
+            gravePressed = false;
+        }
+
+        if (!rightPressed && !leftPressed && !downPressed && !upPressed && !upArrowPressed && !downArrowPressed && !ePressed && !mPressed && !gravePressed) {
             keyDown = false;
         }
     }
@@ -143,5 +154,6 @@ public class KeyHandler implements KeyListener, MouseListener {
         previousUpArrowPressed = upArrowPressed;
         previousEPressed = ePressed;
         previousMPressed = mPressed;
+        previousGravePressed = gravePressed;
     }
 }

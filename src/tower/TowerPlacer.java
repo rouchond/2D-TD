@@ -37,8 +37,8 @@ public class TowerPlacer extends Tile {
         );
 
         location = new int[2];
-        location[0] = col;
-        location[1] = row;
+        location[0] = row;
+        location[1] = col;
 
         this.keyH = keyH;
         this.tileM = tileM;

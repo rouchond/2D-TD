@@ -1,5 +1,6 @@
 package entity.pathfinding;
 
+import main.GamePanel;
 import tile.Tile;
 
 import java.util.ArrayList;
@@ -19,12 +20,11 @@ public class Pathfinder {
      */
     private ArrayList<PathfindingNode> closedList;
 
-    int maxWorldCol;
-    int maxWorldRow;
+    int maxWorldRow, maxWorldCol;
 
-    public Pathfinder (int maxWorldCol, int maxWorldRow) {
-        this.maxWorldCol = maxWorldCol;
+    public Pathfinder (int maxWorldRow, int maxWorldCol) {
         this.maxWorldRow = maxWorldRow;
+        this.maxWorldCol = maxWorldCol;
         nodeGrid = new PathfindingNode[maxWorldRow][maxWorldCol];
         openList = new ArrayList<>();
         closedList = new ArrayList<>();
@@ -37,9 +37,7 @@ public class Pathfinder {
     public void setupNodes(Tile[][] tileMap) {
         for (Tile[] tileRow : tileMap){
             for (Tile tile : tileRow) {
-                if (tile != null) {
-                    nodeGrid[tile.tileCol][tile.tileRow] = new PathfindingNode(tile.tileCol, tile.tileRow, !tile.collision);
-                }
+                nodeGrid[tile.tileRow][tile.tileCol] = new PathfindingNode(tile.tileRow, tile.tileCol, !tile.collision);
             }
         }
     }
@@ -94,13 +92,21 @@ public class Pathfinder {
 
                 float distanceToNeighbor = 1.0f;
 
+                int checkRow = current.row + j;
+                int checkCol = current.col + i;
+
+                //Check if diagonal is in the world boundary
+                if (checkRow < 0 || checkRow >= maxWorldRow || checkCol < 0 || checkCol >= maxWorldCol) {
+                    continue;
+                }
+
                 // If a valid diagonal, use diagonal distance, otherwise skip this tile
                 if (i != 0 && j != 0) {
                     distanceToNeighbor = 1.41f;
 
-                    if ((nodeGrid[current.row][current.col + i] == null || nodeGrid[current.row + j][current.col] == null )
-                            || (!nodeGrid[current.row][current.col + i].walkable
-                            || !nodeGrid[current.row + j][current.col].walkable)) {
+                    //Check if diagonal is walkable
+                    if (!nodeGrid[current.row][checkCol].walkable
+                            || !nodeGrid[checkRow][current.col].walkable){
                         continue;
                     }
                 }
@@ -114,7 +120,7 @@ public class Pathfinder {
                     PathfindingNode neighbor = nodeGrid[neighborRow][neighborCol];
 
                     //Skip walls or tiles we've already checked
-                    if ((neighbor == null || (!neighbor.walkable && neighbor.closed)) ) {
+                    if (!neighbor.walkable && neighbor.closed) {
                         continue;
                     }
 

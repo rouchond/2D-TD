@@ -99,7 +99,6 @@ public class Moving implements State<PlaceholderController> {
      */
     private void move (PlaceholderController controller) {
         physH.setVelocity(getDirection(controller).scale(controller.enemy.speed));
-        //System.out.println("Velocity: " + physH.getVelocity().x + ", " + physH.getVelocity().y);
     }
 
     /**

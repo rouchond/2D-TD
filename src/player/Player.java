@@ -75,7 +75,6 @@ public class Player extends Entity {
      * Logic that is updated every frame
      */
     public void update() {
-        tileCollisionOn = false;
         pController.update();
     }
 

@@ -91,7 +91,6 @@ public class Enemy01 extends Entity {
     }
 
     public void update () {
-        tileCollisionOn = false;
         eController.update();
     }
 

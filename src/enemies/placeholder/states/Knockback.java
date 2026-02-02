@@ -43,7 +43,6 @@ public class Knockback implements State<PlaceholderController> {
 
     @Override
     public void updateState(PlaceholderController controller) {
-        controller.enemy.tileCollisionOn = false;
         float knockbackDuration = (System.nanoTime() - knockBackStartTime) / 1_000_000_000f;
         if (knockbackDuration < MAX_KNOCKBACK_DURATION) {
             physH.update();

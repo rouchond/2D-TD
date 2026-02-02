@@ -32,7 +32,6 @@ public class Moving implements State<PlayerController> {
     public void updateState(PlayerController controller) {
         if (keyH.keyDown) {
             updateDirection(controller.player);
-            colH.checkTile(controller.player);
             move(controller.player);
             physH.update();
         }

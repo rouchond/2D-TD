@@ -53,17 +53,7 @@ public class PhysicsHandler {
      * Moves the entity after each update call
      */
     public void update() {
-        if (!entity.tileCollisionOn) {
-            if (!dash) {
-                entity.worldX += velocity.x;
-                entity.worldY += velocity.y;
-            }
-            else {
-                moveEntity();
-            }
-        } else {
-            resetVelocity();
-        }
+        moveEntity();
     }
 
     /**
@@ -71,9 +61,9 @@ public class PhysicsHandler {
      * Should be used for quick and long movements
      */
     private void moveEntity () {
-        float[] newPos = gp.colH.checkIncremental(entity, velocity);
-        entity.worldX = newPos[0];
-        entity.worldY = newPos[1];
+        Vector2 newPos = gp.colH.checkIncremental(entity, velocity);
+        entity.worldX = newPos.x;
+        entity.worldY = newPos.y;
     }
 
     public Vector2 getVelocity() {return this.velocity;}

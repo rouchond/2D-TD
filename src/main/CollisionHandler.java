@@ -15,352 +15,91 @@ public class CollisionHandler {
     public CollisionHandler (GamePanel gp) {this.gp = gp;}
 
     /**
-     * Checks adjacent tiles in the direction entity is moving in to see if there's a collision
-     * @param entity The entity we're checking for a collision
+     * Checks if entity collision box is overlapping any collidable
+     * @param x X position of entity
+     * @param y Y position of entity
+     * @param entity The entity we're checking collisions
      */
-    public void checkTile(Entity entity) {
-        double entityLeftWorldX = entity.worldX + entity.solidArea.x;
-        double entityRightWorldX = entity.worldX + entity.solidArea.x + entity.solidArea.width;
-        double entityTopWorldY = entity.worldY + entity.solidArea.y;
-        double entityBottomWorldY = entity.worldY + entity.solidArea.y + entity.solidArea.height;
+    public boolean isCollidingAt (float x, float y, Entity entity) {
+        //Calculate collision edges (-1 for preventing edge snagging)
+        float leftEdge   = x + entity.solidArea.x;
+        float rightEdge  = x + entity.solidArea.x + entity.solidArea.width - 1;
+        float topEdge    = y + entity.solidArea.y;
+        float bottomEdge = y + entity.solidArea.y + entity.solidArea.height - 1;
 
-        int entityLeftCol = (int) entityLeftWorldX/ GamePanel.tileSize;
-        int entityRightCol = (int) entityRightWorldX/ GamePanel.tileSize;
-        int entityTopRow = (int) entityTopWorldY/GamePanel.tileSize;
-        int entityBottomRow = (int) entityBottomWorldY/GamePanel.tileSize;
+        //Check tiles for the 4 corners
+        return (isTileSolid(leftEdge, topEdge) ||
+                isTileSolid(rightEdge, topEdge)
+                || isTileSolid(leftEdge, bottomEdge)
+                || isTileSolid(rightEdge, bottomEdge));
+    }
 
-        Tile tileNum1, tileNum2, tileNum3;
-        boolean isColliding;
+    /**
+     * Checks if a specific world coordinate is inside a collidable tile.
+     * @param worldX The X coordinate in pixels
+     * @param worldY The Y coordinate in pixels
+     */
+    private boolean isTileSolid (float worldX, float worldY) {
+        int col = (int) (worldX / GamePanel.tileSize);
+        int row = (int) (worldY / GamePanel.tileSize);
 
-        switch (entity.direction) {
-            case EntityUtil.Direction.UP:
-                entityTopRow = (int)((entityTopWorldY - entity.speed)/GamePanel.tileSize);
-                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
-                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-
-                isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision);
-
-                if (isColliding){
-                    entity.tileCollisionOn = true;
-                }
-                break;
-
-            case UP_LEFT:
-                entityTopRow = (int)((entityTopWorldY - entity.speed)/GamePanel.tileSize);
-                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
-                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-                entityLeftCol = (int)((entityLeftWorldX - entity.speed)/GamePanel.tileSize);
-                tileNum3 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
-
-                isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision || (tileNum2 != null && tileNum3.collision));
-
-                if (isColliding){
-                    entity.tileCollisionOn = true;
-                }
-                break;
-            case UP_RIGHT:
-                entityTopRow = (int)((entityTopWorldY - entity.speed)/GamePanel.tileSize);
-                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
-                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-                entityRightCol = (int)((entityRightWorldX + entity.speed)/GamePanel.tileSize);
-                tileNum3 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-
-                isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision || (tileNum2 != null && tileNum3.collision));
-
-                if (isColliding){
-                    entity.tileCollisionOn = true;
-                }
-                break;
-            case EntityUtil.Direction.DOWN:
-                entityBottomRow = (int)((entityBottomWorldY + entity.speed)/GamePanel.tileSize);
-                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
-                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
-
-                isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision);
-
-                if (isColliding){
-                    entity.tileCollisionOn = true;
-                }
-                break;
-            case DOWN_LEFT:
-                entityBottomRow = (int)((entityBottomWorldY + entity.speed)/GamePanel.tileSize);
-                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
-                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
-                entityLeftCol = (int)((entityLeftWorldX - entity.speed)/GamePanel.tileSize);
-                tileNum3 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
-
-                isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision || (tileNum2 != null && tileNum3.collision));
-
-                if (isColliding){
-                    entity.tileCollisionOn = true;
-                }
-                break;
-            case DOWN_RIGHT:
-                entityBottomRow = (int)((entityBottomWorldY + entity.speed)/GamePanel.tileSize);
-                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
-                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
-                entityRightCol = (int)((entityRightWorldX + entity.speed)/GamePanel.tileSize);
-                tileNum3 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
-
-                isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision || (tileNum2 != null && tileNum3.collision));
-
-                if (isColliding){
-                    entity.tileCollisionOn = true;
-                }
-                break;
-            case EntityUtil.Direction.LEFT:
-                entityLeftCol = (int)((entityLeftWorldX - entity.speed)/GamePanel.tileSize);
-                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
-                tileNum2 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
-
-                isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision);
-
-                if (isColliding){
-                    entity.tileCollisionOn = true;
-                }
-                break;
-            case EntityUtil.Direction.RIGHT:
-                entityRightCol = (int)((entityRightWorldX + entity.speed)/GamePanel.tileSize);
-                tileNum1 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
-
-                isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision);
-
-                if (isColliding){
-                    entity.tileCollisionOn = true;
-                }
-                break;
+        // If the entity tries to check a tile outside the map, treat it as a wall.
+        if (col < 0 || col >= gp.maxWorldCol || row < 0 || row >= gp.maxWorldRow) {
+            return true;
         }
+
+        return gp.tileM.mapTileNum[row][col].collision;
     }
 
     /**
      * Checks how far an entity can move before colliding or reaching an empty tile
-     * returns a float array that contains the x and y positions the entity can go to
-     * @param entity
-     * @return
+     * returns a float array that contains the x and y positions the entity will move to
+     * @param entity The entity we're checking collisions on
+     * @param velocity The velocity the entity is moving at
      */
-    public float[] checkIncremental(Entity entity, Vector2 dir) {
-        float xComp = 0, yComp = 0;
+    public Vector2 checkIncremental(Entity entity, Vector2 velocity) {
+        float nextX = entity.worldX + velocity.x;
+        float nextY = entity.worldY + velocity.y;
 
-        double entityLeftWorldX = entity.worldX + entity.solidArea.x;
-        double entityRightWorldX = entity.worldX + entity.solidArea.x + entity.solidArea.width;
-        double entityTopWorldY = entity.worldY + entity.solidArea.y;
-        double entityBottomWorldY = entity.worldY + entity.solidArea.y + entity.solidArea.height;
-
-        int entityLeftCol = (int) entityLeftWorldX/ GamePanel.tileSize;
-        int entityRightCol = (int) entityRightWorldX/ GamePanel.tileSize;
-        int entityTopRow = (int) entityTopWorldY/GamePanel.tileSize;
-        int entityBottomRow = (int) entityBottomWorldY/GamePanel.tileSize;
-
-        Tile tileNum1, tileNum2, tileNum3;
-        boolean isColliding;
-
-        switch (entity.direction) {
-            case EntityUtil.Direction.UP:
-                for (int i = 0; i < entity.speed; i += 2) {
-                    float incY = i + 2;
-                    entityTopRow = (int) ((entityTopWorldY - incY) / GamePanel.tileSize);
-                    tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
-                    tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-
-                    isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision);
-
-                    if (isColliding) {
-                        entity.tileCollisionOn = true;
-                        break;
-                    }
-
-                    yComp = -incY;
-                }
-
-                if (yComp != 0) {
-                    yComp = -entity.speed;
-                }
-                break;
-
-            case UP_LEFT:
-                for (int i = 0; i < entity.speed; i += 2) {
-                    float inc = i + 2;
-                    entityTopRow = (int) ((entityTopWorldY - inc) / GamePanel.tileSize);
-                    tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
-                    tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-                    entityLeftCol = (int) ((entityLeftWorldX - inc) / GamePanel.tileSize);
-                    tileNum3 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
-
-                    isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision || (tileNum2 != null && tileNum3.collision));
-
-                    if (isColliding) {
-                        entity.tileCollisionOn = true;
-                        break;
-                    }
-
-                    xComp = -inc;
-                    yComp = -inc;
-                }
-
-                if (yComp != 0) {
-                    yComp = -entity.speed;
-                }
-
-                if (xComp != 0) {
-                    xComp = -entity.speed;
-                }
-                break;
-            case UP_RIGHT:
-                for (int i = 0; i < entity.speed; i += 2) {
-                    float inc = i + 2;
-                    entityTopRow = (int) ((entityTopWorldY - inc) / GamePanel.tileSize);
-                    tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
-                    tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-                    entityRightCol = (int) ((entityRightWorldX + inc) / GamePanel.tileSize);
-                    tileNum3 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-
-                    isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision || (tileNum2 != null && tileNum3.collision));
-
-                    if (isColliding) {
-                        entity.tileCollisionOn = true;
-                        break;
-                    }
-
-                    xComp = inc;
-                    yComp = -inc;
-                }
-
-                if (yComp != 0) {
-                    yComp = -entity.speed;
-                }
-
-                if (xComp != 0) {
-                    xComp = entity.speed;
-                }
-                break;
-            case EntityUtil.Direction.DOWN:
-                for (int i = 0; i < entity.speed; i += 2) {
-                    float inc = i + 2;
-                    entityBottomRow = (int) ((entityBottomWorldY + inc) / GamePanel.tileSize);
-                    tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
-                    tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
-
-                    isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision);
-
-                    if (isColliding) {
-                        entity.tileCollisionOn = true;
-                        break;
-                    }
-                    yComp = inc;
-                }
-                if (yComp != 0) {
-                    yComp = entity.speed;
-                }
-
-                break;
-            case DOWN_LEFT:
-                for (int i = 0; i < entity.speed; i += 2) {
-                    float inc = i + 2;
-                    entityBottomRow = (int) ((entityBottomWorldY + inc) / GamePanel.tileSize);
-                    tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
-                    tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
-                    entityLeftCol = (int) ((entityLeftWorldX - inc) / GamePanel.tileSize);
-                    tileNum3 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
-
-                    isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision || (tileNum2 != null && tileNum3.collision));
-
-                    if (isColliding) {
-                        entity.tileCollisionOn = true;
-                        break;
-                    }
-
-                    xComp = -inc;
-                    yComp = inc;
-                }
-
-                if (yComp != 0) {
-                    yComp = entity.speed;
-                }
-
-                if (xComp != 0) {
-                    xComp = -entity.speed;
-                }
-                break;
-            case DOWN_RIGHT:
-                for (int i = 0; i < entity.speed; i += 2) {
-                    float inc = i + 2;
-                    entityBottomRow = (int) ((entityBottomWorldY + inc) / GamePanel.tileSize);
-                    tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
-                    tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
-                    entityRightCol = (int) ((entityRightWorldX + inc) / GamePanel.tileSize);
-                    tileNum3 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
-
-                    isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision || (tileNum2 != null && tileNum3.collision));
-
-                    if (isColliding) {
-                        entity.tileCollisionOn = true;
-                        break;
-                    }
-
-                    xComp = inc;
-                    yComp = inc;
-                }
-
-                if (yComp != 0) {
-                    yComp = -entity.speed;
-                }
-
-                if (xComp != 0) {
-                    xComp = entity.speed;
-                }
-                break;
-            case EntityUtil.Direction.LEFT:
-                for (int i = 0; i < entity.speed; i += 2) {
-                    float inc = i + 2;
-                    entityLeftCol = (int) ((entityLeftWorldX - inc) / GamePanel.tileSize);
-                    tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
-                    tileNum2 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
-
-                    isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision);
-
-                    if (isColliding) {
-                        entity.tileCollisionOn = true;
-                        break;
-                    }
-
-                    xComp = -inc;
-                }
-
-                if (xComp != 0) {
-                    xComp = -entity.speed;
-                }
-                break;
-            case EntityUtil.Direction.RIGHT:
-                for (int i = 0; i < entity.speed; i += 2) {
-                    float inc = i + 2;
-                    entityRightCol = (int) ((entityRightWorldX + entity.speed) / GamePanel.tileSize);
-                    tileNum1 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
-                    tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
-
-                    isColliding = (tileNum1 != null && tileNum1.collision) || (tileNum2 != null && tileNum2.collision);
-
-                    if (isColliding) {
-                        entity.tileCollisionOn = true;
-                    }
-
-                    xComp = inc;
-                }
-                if (xComp != 0) {
-                    xComp = entity.speed;
-                }
-                break;
+        // Just move if the movement is safe
+        if (!isCollidingAt(nextX, nextY, entity)) {
+            return new Vector2(nextX, nextY);
         }
 
-        float[] newPos = new float[2];
-        newPos[0] = entity.worldX + xComp;
-        newPos[1] = entity.worldY + yComp;
+        // Incremental Check on long movements
+        float currentX = entity.worldX;
+        float currentY = entity.worldY;
 
-        if (entity.tileCollisionOn){
-            System.out.println("Collided");
+        // 1. HORIZONTAL STEPPING
+        float stepsX = Math.abs(velocity.x);
+        float signX = Math.signum(velocity.x);
+
+        for (int i = 0; i < stepsX; i += 2) {
+            float checkX = currentX + signX; // Move 2 pixels at a time in the right direction
+            if (!isCollidingAt(checkX, currentY, entity)) {
+                currentX = checkX;
+            } else {
+                // We hit a wall! Stop stepping X.
+                break;
+            }
         }
 
-        return newPos;
+        // 2. VERTICAL STEPPING (Using the updated currentX!)
+        float stepsY = Math.abs(velocity.y);
+        float signY = Math.signum(velocity.y);
+
+        for (int i = 0; i < stepsY; i += 2) {
+            float checkY = currentY + signY;
+            if (!isCollidingAt(currentX, checkY, entity)) {
+                currentY = checkY;
+            } else {
+                // We hit a wall! Stop stepping Y.
+                break;
+            }
+        }
+
+        return new Vector2(currentX, currentY);
+
     }
 
 }

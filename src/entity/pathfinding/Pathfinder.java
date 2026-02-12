@@ -120,7 +120,7 @@ public class Pathfinder {
                     PathfindingNode neighbor = nodeGrid[neighborRow][neighborCol];
 
                     //Skip walls or tiles we've already checked
-                    if (!neighbor.walkable && neighbor.closed) {
+                    if (!neighbor.walkable || neighbor.closed) {
                         continue;
                     }
 

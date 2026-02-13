@@ -92,7 +92,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     // Entities
     public Player player = new Player(this, keyH, camera, colH, tileM);
-    EnemyHandler enemyH = new EnemyHandler(this, camera, pathfinder, colH, tileM);
+    public EnemyHandler enemyH = new EnemyHandler(this, camera, pathfinder, colH, tileM);
 
     /**
      * An empty black game window that can listen for key inputs
@@ -104,6 +104,8 @@ public class GamePanel extends JPanel implements Runnable{
         this.setBackground(Color.getHSBColor(color[0],color[1],color[2]));
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
+        this.addMouseListener(keyH);
+        this.addMouseMotionListener(keyH);
         this.setFocusable(true);
     }
 

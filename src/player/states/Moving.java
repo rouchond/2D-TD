@@ -17,6 +17,8 @@ public class Moving implements State<PlayerController> {
     PhysicsHandler physH;
     CollisionHandler colH;
 
+    private Vector2 movementDir;
+
     public Moving (KeyHandler keyH, PhysicsHandler physH, CollisionHandler colH) {
         this.keyH = keyH;
         this.physH = physH;
@@ -49,35 +51,26 @@ public class Moving implements State<PlayerController> {
      * @param player The player object
      */
     private void updateDirection (Player player) {
+        int xDir = 0, yDir = 0;
         if (keyH.upPressed) {
-            if (keyH.rightPressed) {
-                player.direction = EntityUtil.Direction.UP_RIGHT;
-            } else if (keyH.leftPressed) {
-                player.direction = EntityUtil.Direction.UP_LEFT;
-            } else {
-                player.direction = EntityUtil.Direction.UP;
-            }
-
+            yDir--;
         } else if (keyH.downPressed) {
-            if (keyH.rightPressed) {
-                player.direction = EntityUtil.Direction.DOWN_RIGHT;
-            } else if (keyH.leftPressed) {
-                player.direction = EntityUtil.Direction.DOWN_LEFT;
-            } else {
-                player.direction = EntityUtil.Direction.DOWN;
-            }
-
-        } else if (keyH.rightPressed) {
-            player.direction = EntityUtil.Direction.RIGHT;
-        } else if (keyH.leftPressed) {
-            player.direction = EntityUtil.Direction.LEFT;
+            yDir++;
         }
+
+        if (keyH.rightPressed) {
+            xDir++;
+        } else if (keyH.leftPressed) {
+            xDir--;
+        }
+
+        movementDir = new Vector2(xDir, yDir);
     }
 
     /**
      * Sets the velocity of the player
      */
     private void move (Player player) {
-        physH.setVelocity(directionVectors.get(player.direction).normalize());
+        physH.setVelocity(movementDir.normalize());
     }
 }

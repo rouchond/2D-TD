@@ -1,19 +1,19 @@
 package main;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 
-public class KeyHandler implements KeyListener, MouseListener {
+public class KeyHandler implements KeyListener, MouseListener, MouseMotionListener {
 
     public boolean keyDown, leftPressed, rightPressed, upPressed, downPressed, mousePressed;
     public boolean upArrowPressed, downArrowPressed;
     public boolean previousUpArrowPressed, previousDownArrowPressed;
     public boolean ePressed, previousEPressed;
     public boolean mPressed, previousMPressed;
+    public boolean previousMousePressed;
 
     public boolean gravePressed, previousGravePressed;
+
+    public int mouseX, mouseY;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -149,11 +149,24 @@ public class KeyHandler implements KeyListener, MouseListener {
         // Will not implement
     }
 
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        mouseX = e.getX();
+        mouseY = e.getY();
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        mouseX = e.getX();
+        mouseY = e.getY();
+    }
+
     public void update() {
         previousDownArrowPressed = downArrowPressed;
         previousUpArrowPressed = upArrowPressed;
         previousEPressed = ePressed;
         previousMPressed = mPressed;
         previousGravePressed = gravePressed;
+        previousMousePressed = mousePressed;
     }
 }

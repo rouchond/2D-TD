@@ -35,7 +35,12 @@ public class EnemyHandler {
         //enemies.add(new Enemy01(gp, colH, tileM, 8, 6));
     }
 
+    public ArrayList<Enemy01> getEnemies() {
+        return enemies;
+    }
+
     public void update () {
+        enemies.removeIf(enemy -> enemy.health <= 0);
         for (Enemy01 enemy : enemies) {
             enemy.update();
         }

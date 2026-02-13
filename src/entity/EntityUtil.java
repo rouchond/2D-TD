@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class EntityUtil {
     /**
-     * The 8 possible directions of the player
+     * The 8 possible directions of the player (should be used for animations)
      */
     public enum Direction {
         UP,

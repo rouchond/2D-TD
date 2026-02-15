@@ -80,7 +80,7 @@ class PlayerAttackTest {
         long cooldown = 350_000_000L; // 0.35s in nanos
         long lastAttack = 1_000_000_000L;
         long now = lastAttack + 200_000_000L; // 0.2s later
-        assertFalse(Player.canAttack(lastAttack, now, cooldown));
+        assertFalse(MeleeAttack.canAttack(lastAttack, now, cooldown));
     }
 
     @Test
@@ -88,7 +88,7 @@ class PlayerAttackTest {
         long cooldown = 350_000_000L;
         long lastAttack = 1_000_000_000L;
         long now = lastAttack + 400_000_000L; // 0.4s later
-        assertTrue(Player.canAttack(lastAttack, now, cooldown));
+        assertTrue(MeleeAttack.canAttack(lastAttack, now, cooldown));
     }
 
     @Test
@@ -96,7 +96,7 @@ class PlayerAttackTest {
         long cooldown = 350_000_000L;
         long lastAttack = 1_000_000_000L;
         long now = lastAttack + cooldown; // exactly at boundary
-        assertTrue(Player.canAttack(lastAttack, now, cooldown));
+        assertTrue(MeleeAttack.canAttack(lastAttack, now, cooldown));
     }
 
     @Test
@@ -104,14 +104,14 @@ class PlayerAttackTest {
         long cooldown = 350_000_000L;
         long lastAttack = 0L; // never attacked
         long now = 5_000_000_000L; // System.nanoTime() returns large values in practice
-        assertTrue(Player.canAttack(lastAttack, now, cooldown));
+        assertTrue(MeleeAttack.canAttack(lastAttack, now, cooldown));
     }
 
     // --- Attack hitbox positioning tests ---
 
     @Test
     void attackHitboxPositionedToTheRight() {
-        Rectangle rect = Player.computeAttackRect(100, 100, new Vector2(1, 0), 30, 28, 28);
+        Rectangle rect = MeleeAttack.computeAttackRect(100, 100, new Vector2(1, 0), 30, 28, 28);
         // Center of rect should be at (100 + 30, 100) = (130, 100)
         assertEquals(130 - 14, rect.x);
         assertEquals(100 - 14, rect.y);
@@ -121,7 +121,7 @@ class PlayerAttackTest {
 
     @Test
     void attackHitboxPositionedUpward() {
-        Rectangle rect = Player.computeAttackRect(100, 100, new Vector2(0, -1), 30, 28, 28);
+        Rectangle rect = MeleeAttack.computeAttackRect(100, 100, new Vector2(0, -1), 30, 28, 28);
         // Center at (100, 100 - 30) = (100, 70)
         assertEquals(100 - 14, rect.x);
         assertEquals(70 - 14, rect.y);
@@ -130,7 +130,7 @@ class PlayerAttackTest {
     @Test
     void attackHitboxPositionedDiagonal() {
         Vector2 facing = new Vector2(1, 1).normalize();
-        Rectangle rect = Player.computeAttackRect(100, 100, facing, 30, 28, 28);
+        Rectangle rect = MeleeAttack.computeAttackRect(100, 100, facing, 30, 28, 28);
         float expectedCX = 100 + facing.x * 30;
         float expectedCY = 100 + facing.y * 30;
         assertEquals(Math.round(expectedCX) - 14, rect.x);
